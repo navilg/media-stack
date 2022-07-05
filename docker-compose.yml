@@ -1,0 +1,74 @@
+version: '2'
+services:
+  transmission:
+    container_name: transmission
+    image: lscr.io/linuxserver/transmission:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - USER=${TX_USER:-admin} #optional
+      - PASS=${TX_PASS:-nimdatx} #optional
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    volumes:
+      - tx-config:/config
+      - movies:/downloads
+      - tx-watch:/watch
+    restart: "unless-stopped"
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    ports:
+      - 7878:7878
+    volumes:
+      - radarr-config:/config
+      - movies:/downloads
+    restart: "unless-stopped"
+
+  jackett:
+    container_name: jackett
+    image: lscr.io/linuxserver/jackett:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - jackett-config:/config
+      - jackett-blackhole:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - /path/to/library:/config
+      - tvseries:/data/tvshows
+      - movies:/data/movies
+    ports:
+      - 8096:8096
+      - 7359:7359/udp #optional
+    restart: unless-stopped
+
+volumes:
+  tx-config:
+  movies:
+  tx-watch:
+  radarr-config:
+  jackett-config:
+  jackett-blackhole:
+  jellyfin-config:
+  tvseries:
