@@ -61,6 +61,7 @@ services:
     ports:
       - 8096:8096
       - 7359:7359/udp #optional
+      - 8920:8920
     restart: unless-stopped
 
 volumes:
