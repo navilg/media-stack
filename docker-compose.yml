@@ -7,8 +7,8 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/London
-      - USER=${TX_USER:-admin} #optional
-      - PASS=${TX_PASS:-nimdatx} #optional
+      - USER=admin
+      - PASS=nimdatx
     ports:
       - 9091:9091
       - 51413:51413
