@@ -55,13 +55,24 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - /path/to/library:/config
+      - jellyfin-config:/config
       - tvseries:/data/tvshows
       - movies:/data/movies
     ports:
       - 8096:8096
       - 7359:7359/udp #optional
       - 8920:8920
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.21.3-alpine
+    container_name: nginx
+    volumes:
+      - nginx-config:/etc/nginx
+      - letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
     restart: unless-stopped
 
 volumes:
@@ -73,3 +84,5 @@ volumes:
   jackett-blackhole:
   jellyfin-config:
   tvseries:
+  nginx-config:
+  letsencrypt:

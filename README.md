@@ -47,3 +47,29 @@ docker run -d   --name=jellyfin   -e PUID=1000   -e PGID=1000   -e TZ=Europe/Lon
 - Open Jellyfin at http://localhost:8096
 - Configure as it asks for first time.
 - Add media library folder and choose /data/movies/
+
+# Configure Nginx
+
+- Get inside Nginx container
+- `cd /etc/nginx/conf.d`
+- Add proxies as per below for all tools.
+- Close ports of other tools in firewall/security groups except port 80 and 443.
+
+
+# Radarr Nginx reverse proxy
+
+- Settings --> General --> URL Base --> Add base (/radarr)
+- Add below proxy in nginx configuration
+
+```
+location /radarr {
+    proxy_pass http://radarr:7878;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+```
+
+# Jackett Nginx reverse proxy
+
+To be added
