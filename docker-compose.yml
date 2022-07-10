@@ -15,7 +15,7 @@ services:
       - 51413:51413/udp
     volumes:
       - tx-config:/config
-      - movies:/downloads
+      - tx-downloads:/downloads
       - tx-watch:/watch
     restart: "unless-stopped"
 
@@ -30,7 +30,8 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - movies:/downloads
+      - movies:/movies
+      - tx-downloads:/downloads
     restart: "unless-stopped"
 
   jackett:
@@ -56,7 +57,7 @@ services:
       - TZ=Europe/London
     volumes:
       - jellyfin-config:/config
-      - tvseries:/data/tvshows
+      - tvshows:/data/tvshows
       - movies:/data/movies
     ports:
       - 8096:8096
@@ -77,12 +78,13 @@ services:
 
 volumes:
   tx-config:
-  movies:
+  tx-downloads:
   tx-watch:
   radarr-config:
   jackett-config:
   jackett-blackhole:
   jellyfin-config:
-  tvseries:
+  tvshows:
+  movies:
   nginx-config:
   letsencrypt:
