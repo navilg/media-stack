@@ -34,6 +34,21 @@ services:
       - tx-downloads:/downloads
     restart: "unless-stopped"
 
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - sonarr-config:/config
+      - tvshows:/tv #optional
+      - tx-downloads:/downloads #optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
   jackett:
     container_name: jackett
     image: lscr.io/linuxserver/jackett:latest
@@ -81,6 +96,7 @@ volumes:
   tx-downloads:
   tx-watch:
   radarr-config:
+  sonarr-config:
   jackett-config:
   jackett-blackhole:
   jellyfin-config:
