@@ -30,7 +30,6 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - movies:/movies
       - tx-downloads:/downloads
     restart: "unless-stopped"
 
@@ -43,7 +42,6 @@ services:
       - TZ=Europe/London
     volumes:
       - sonarr-config:/config
-      - tvshows:/tv #optional
       - tx-downloads:/downloads #optional
     ports:
       - 8989:8989
@@ -72,8 +70,7 @@ services:
       - TZ=Europe/London
     volumes:
       - jellyfin-config:/config
-      - tvshows:/data/tvshows
-      - movies:/data/movies
+      - tx-downloads:/data
     ports:
       - 8096:8096
       - 7359:7359/udp #optional
@@ -100,7 +97,5 @@ volumes:
   jackett-config:
   jackett-blackhole:
   jellyfin-config:
-  tvshows:
-  movies:
   nginx-config:
   letsencrypt:
