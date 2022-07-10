@@ -15,8 +15,7 @@ services:
       - 51413:51413/udp
     volumes:
       - tx-config:/config
-      - movies:/downloads/movies
-      - tvshows:/downloads/tvshows
+      - movies:/downloads
       - tx-watch:/watch
     restart: "unless-stopped"
 
@@ -31,22 +30,8 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - movies:/downloads/movies
+      - movies:/downloads
     restart: "unless-stopped"
-
-  sonarr:
-    container_name: sonarr
-    image: lscr.io/linuxserver/sonarr:latest
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/London
-    volumes:
-      - sonarr-config:/config
-      - tvshows:/downloads/tvshows #optional
-    ports:
-      - 8989:8989
-    restart: unless-stopped
 
   jackett:
     container_name: jackett
@@ -71,7 +56,7 @@ services:
       - TZ=Europe/London
     volumes:
       - jellyfin-config:/config
-      - tvshows:/data/tvshows
+      - tvseries:/data/tvshows
       - movies:/data/movies
     ports:
       - 8096:8096
@@ -93,12 +78,11 @@ services:
 volumes:
   tx-config:
   movies:
-  tvshows:
   tx-watch:
   radarr-config:
-  sonarr-config:
   jackett-config:
   jackett-blackhole:
   jellyfin-config:
+  tvseries:
   nginx-config:
   letsencrypt:
