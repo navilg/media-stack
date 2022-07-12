@@ -1,4 +1,5 @@
 version: '2'
+name: media-stack
 services:
   transmission:
     container_name: transmission
