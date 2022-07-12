@@ -3,6 +3,8 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
@@ -22,6 +24,8 @@ services:
   radarr:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
@@ -36,6 +40,8 @@ services:
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
@@ -50,6 +56,8 @@ services:
   jackett:
     container_name: jackett
     image: lscr.io/linuxserver/jackett:latest
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
@@ -64,6 +72,8 @@ services:
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
@@ -80,6 +90,8 @@ services:
   nginx:
     image: nginx:1.21.3-alpine
     container_name: nginx
+    networks:
+      - mynetwork
     volumes:
       - nginx-config:/etc/nginx
       - letsencrypt:/etc/letsencrypt
