@@ -99,3 +99,7 @@ volumes:
   jellyfin-config:
   nginx-config:
   letsencrypt:
+
+networks:
+  mynetwork:
+    external: true
