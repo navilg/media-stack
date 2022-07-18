@@ -1,32 +1,20 @@
-# Create docker network
+# Install radarr. sonarr, transmission, jackett and jellyfin
 
-docker create network radarr
+- Change transmission password in docker-compose.yml file
+- Run below commands
 
-# Install radarr
-
-docker run -d   --name=radarr   -e PUID=1000   -e PGID=1000   -e TZ=Europe/London   -p 7878:7878 -v radarr-data:/config --restart unless-stopped -v $HOME/movies:/downloads --net radarr  lscr.io/linuxserver/radarr:latest
-
-# Install Transmission
-
-Download directory must be same for Radarr and Transmission
-
-docker run -d   --name=transmission   -e PUID=1000   -e PGID=1000   -e TZ=Europe/London -p 9091:9091   -p 51413:51413   -p 51413:51413/udp   -v transmission-config:/config  -v $HOME/movies:/downloads -v transmission-watch:/watch --restart unless-stopped --net radarr  lscr.io/linuxserver/transmission:latest
-
-# Install Jackett
-
-docker run -d   --name=jackett   -e PUID=1000   -e PGID=1000   -e TZ=Europe/London -p 9117:9117 -v jackett-config:/config -v jackett-downloads:/downloads --restart unless-stopped --net radarr  lscr.io/linuxserver/jackett:latest
-
-# Install Jellyfin (Optional)
-
-Download directory same as Transmissiona and Radarr
-
-docker run -d   --name=jellyfin   -e PUID=1000   -e PGID=1000   -e TZ=Europe/London -p 8096:8096 -p 7359:7359/udp -v jellyfin-config:/config -v transmission-download:/data/movies --restart unless-stopped --net radarr  lscr.io/linuxserver/jellyfin:latest
+```
+bash pre-deploy.sh
+docker-compose up -d
+docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL
+bash post-deploy.sh
+```
 
 # Add indexer to Jackett
 
 - Open Jackett UI at http://localhost:9117
 - Add indexer
-- Search for torrent indexer (e.g. the pirates bay)
+- Search for torrent indexer (e.g. the pirates bay, YTS)
 - Add selected
 
 # Configure Radarr
@@ -66,6 +54,9 @@ docker run -d   --name=jellyfin   -e PUID=1000   -e PGID=1000   -e TZ=Europe/Lon
 - Get inside Nginx container
 - `cd /etc/nginx/conf.d`
 - Add proxies as per below for all tools.
+- OR, copy nginx.conf file to /etc/nginx/conf.d/default.conf and make necessary changes
+
+`docker cp nginx.conf nginx:/etc/nginx/conf.d/default.conf && docker exec -it nginx nginx -s reload`
 - Close ports of other tools in firewall/security groups except port 80 and 443.
 
 
