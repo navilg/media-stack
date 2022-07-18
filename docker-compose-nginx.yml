@@ -1,0 +1,23 @@
+version: '2'
+name: nginx
+services:
+  nginx:
+    image: nginx:1.21.3-alpine
+    container_name: nginx
+    networks:
+      - mynetwork
+    volumes:
+      - nginx-config:/etc/nginx
+      - letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+
+volumes:
+  nginx-config:
+  letsencrypt:
+
+networks:
+  mynetwork:
+    external: true
