@@ -3,7 +3,7 @@ name: media-stack
 services:
   transmission:
     container_name: transmission
-    image: lscr.io/linuxserver/transmission:3.00-r5-ls125
+    image: lscr.io/linuxserver/transmission:3.00-r5-ls127
     networks:
       - mynetwork
     environment:
