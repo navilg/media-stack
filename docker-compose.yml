@@ -24,7 +24,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.1.0.6175-ls145
+    image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
     networks:
       - mynetwork
     environment:
@@ -39,7 +39,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls149
+    image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls150
     container_name: sonarr
     networks:
       - mynetwork
@@ -56,7 +56,7 @@ services:
 
   jackett:
     container_name: jackett
-    image: lscr.io/linuxserver/jackett:v0.20.1281-ls73
+    image: lscr.io/linuxserver/jackett:v0.20.1426-ls74
     networks:
       - mynetwork
     environment:
@@ -71,7 +71,7 @@ services:
     restart: unless-stopped
 
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls168
+    image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls171
     container_name: jellyfin
     networks:
       - mynetwork
