@@ -82,6 +82,8 @@ services:
     volumes:
       - jellyfin-config:/config
       - tx-downloads:/data
+  # devices:
+   #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
       - 8096:8096
       - 7359:7359/udp #optional
