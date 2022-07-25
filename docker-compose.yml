@@ -9,7 +9,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=UTC
       - USER=admin
       - PASS=nimdatx
     ports:
@@ -30,7 +30,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=UTC
     ports:
       - 7878:7878
     volumes:
@@ -46,7 +46,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=UTC
     volumes:
       - sonarr-config:/config
       - tx-downloads:/downloads #optional
@@ -62,7 +62,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=UTC
     volumes:
       - jackett-config:/config
       - jackett-blackhole:/downloads
@@ -78,7 +78,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=UTC
     volumes:
       - jellyfin-config:/config
       - tx-downloads:/data
