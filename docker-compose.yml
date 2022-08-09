@@ -45,7 +45,7 @@ services:
       - 6881:6881/udp
     restart: "unless-stopped"
   radarr:
-    profiles: ["radarr", "v1.0", "v2.0"]
+    profiles: ["base", "radarr", "v1.0", "v2.0"]
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
     networks:
@@ -62,7 +62,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    profiles: ["sonarr", "v1.0", "v2.0"]
+    profiles: ["base", "sonarr", "v1.0", "v2.0"]
     image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls150
     container_name: sonarr
     networks:
@@ -112,7 +112,7 @@ services:
     restart: unless-stopped
 
   jellyfin:
-    profiles: ["jelly", "v1.0", "v2.0"]
+    profiles: ["base", "jelly", "v1.0", "v2.0"]
     image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls171
     container_name: jellyfin
     networks:
