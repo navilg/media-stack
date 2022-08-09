@@ -1,4 +1,4 @@
-# Install radarr, sonarr, transmission / qBittorrent, jackett and jellyfin
+# Install media stack
 
 If transmission is chosen, Uncomment transmission service in docker-compose.yml file
 
@@ -7,8 +7,14 @@ If transmission is chosen, Uncomment transmission service in docker-compose.yml 
 
 ```
 docker network create mynetwork
+
+# Install Jellyfin, Radarr, Sonarr, Jackett and Transmission stack
+docker-compose --profile v1.0 up -d
+
+# Or, Install Jellyfin, Radarr, Sonarr, Prowlarr and qBitTorrent stack
 docker-compose --profile v2.0 up -d
-docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL
+
+docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 
 # Configure Transmission / qBittorrent
@@ -25,6 +31,7 @@ For qBiTorrent / Transmission
 ```
 # docker exec -it transmission bash # Get inside transmission container, OR
 docker exec -it qbittorrent bash # Get inside qBittorrent container
+
 mkdir /downloads/movies /downloads/tvshows
 chown 1000:1000 /downloads/movies /downloads/tvshows
 ```
@@ -59,6 +66,14 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 # Configure Jackett
 
 - Add admin password
+
+# Configure Prowlarr
+
+- Open Prowlarr at http://localhost:9696
+- Settings --> General --> Authentications --> Select AUthentication and add username and password
+- Add Indexers, Indexers --> Add Indexer --> Search for indexer --> Choose base URL --> Test and Save
+- Add application, Settings --> Apps --> Add application --> Choose Sonarr or Radarr or any apps to link --> Prowlarr server (http://localhost:9696) --> Radarr server (http://localhost:7878) --> API Key --> Test and Save
+- This will add indexers in respective apps automatically.
 
 # Apply SSL in Nginx
 
@@ -106,6 +121,25 @@ location /radarr {
 ```
 location /radarr {
     proxy_pass http://sonarr:8989;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+  }
+```
+
+# Prowlarr Nginx reverse proxy
+
+- Settings --> General --> URL Base --> Add base (/prowlarr)
+- Add below proxy in nginx configuration
+
+This may need to change configurations in indexers and base in URL.
+
+```
+location /prowlarr {
+    proxy_pass http://prowlarr:9696;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
