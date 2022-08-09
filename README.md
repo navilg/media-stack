@@ -1,4 +1,6 @@
-# Install radarr. sonarr, transmission, jackett and jellyfin
+# Install radarr, sonarr, transmission / qBittorrent, jackett and jellyfin
+
+If transmission is chosen, Uncomment transmission service in docker-compose.yml file
 
 - Change transmission password in docker-compose.yml file
 - Run below commands
@@ -8,6 +10,24 @@ bash pre-deploy.sh
 docker-compose up -d
 docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL
 bash post-deploy.sh
+```
+
+# Configure Transmission / qBittorrent
+
+For qBitTorrent, 
+
+- Open qBitTorrent at http://localhost:5080. Default username:password is admin:adminadmin
+- Go to Tools --> Options --> WebUI --> Change password
+
+For qBiTorrent / Transmission
+
+- From backend, Run below commands
+
+```
+# docker exec -it transmission bash # Get inside transmission container, OR
+docker exec -it qbittorrent bash # Get inside qBittorrent container
+mkdir /downloads/movies /downloads/tvshows
+chown 1000:1000 /downloads/movies /downloads/tvshows
 ```
 
 # Add indexer to Jackett
@@ -23,7 +43,7 @@ bash post-deploy.sh
 - Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
 - Settings --> Indexers --> Add --> Add Rarbg indexer --> Add minimum seeder (4) --> Test --> Save
 - Settings --> Indexers --> Add --> Torznab --> Follow steps from Jackett to add indexer
-- Settings --> Download clients --> Transmission --> Add Host (transmission) and port (9091) --> Username and password if added --> Test --> Save
+- Settings --> Download clients --> Transmission --> Add Host (transmission / qbittorrent) and port (9091 / 5080) --> Username and password if added --> Test --> Save
 - Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
 
 # Add a movie
@@ -150,6 +170,20 @@ location ^~ /transmission {
           location /transmission {
               return 301 https://$host/transmission/web;
           }
+}
+```
+
+# qBittorrent Nginx proxy
+
+```
+location /qbt/ {
+    proxy_pass         http://qbittorrent:5080/;
+    proxy_http_version 1.1;
+
+    proxy_set_header   Host               http://qbittorrent:5080;
+    proxy_set_header   X-Forwarded-Host   $http_host;
+    proxy_set_header   X-Forwarded-For    $remote_addr;
+    proxy_cookie_path  /                  "/; Secure";
 }
 ```
 

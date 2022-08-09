@@ -27,7 +27,7 @@ services:
 
   ## Comment qbittorrent service, if transmission is enabled. ##
   ## Default credentials - Username: admin password: adminadmin ##
-  ## Change password after install from UI --> Settings --> WebUI ##
+  ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:4.4.3.1-r1-ls209
