@@ -1,27 +1,51 @@
 version: '2'
 name: media-stack
 services:
-  transmission:
-    container_name: transmission
-    image: lscr.io/linuxserver/transmission:3.00-r5-ls127
+
+  ## Uncomment to enable transmission as bittorrent client. ##
+  ## Keep one of qbittorrent or transmission ##
+  # transmission:
+  #   container_name: transmission
+  #   image: lscr.io/linuxserver/transmission:3.00-r5-ls127
+  #   networks:
+  #     - mynetwork
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=UTC
+  #     - USER=admin
+  #     - PASS=nimdatx
+  #   ports:
+  #     - 9091:9091
+  #     - 51413:51413
+  #     - 51413:51413/udp
+  #   volumes:
+  #     - tx-config:/config
+  #     - torrent-downloads:/downloads
+  #     - tx-watch:/watch
+  #   restart: "unless-stopped"
+
+  ## Comment qbittorrent service, if transmission is enabled. ##
+  ## Default credentials - Username: admin password: adminadmin ##
+  ## Change password after install from UI --> Settings --> WebUI ##
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:4.4.3.1-r1-ls209
     networks:
       - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
-      - USER=admin
-      - PASS=nimdatx
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
+      - WEBUI_PORT=5080
     volumes:
-      - tx-config:/config
-      - tx-downloads:/downloads
-      - tx-watch:/watch
+      - qbittorrent-config:/config
+      - torrent-downloads:/downloads
+    ports:
+      - 5080:5080
+      - 6881:6881
+      - 6881:6881/udp
     restart: "unless-stopped"
-
   radarr:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
@@ -35,7 +59,7 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - tx-downloads:/downloads
+      - torrent-downloads:/downloads
     restart: "unless-stopped"
 
   sonarr:
@@ -49,7 +73,7 @@ services:
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - tx-downloads:/downloads #optional
+      - torrent-downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -81,7 +105,7 @@ services:
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - tx-downloads:/data
+      - torrent-downloads:/data
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
@@ -91,14 +115,16 @@ services:
     restart: unless-stopped
 
 volumes:
-  tx-config:
-  tx-downloads:
-  tx-watch:
+  torrent-downloads:
   radarr-config:
   sonarr-config:
   jackett-config:
   jackett-blackhole:
   jellyfin-config:
+  qbittorrent-config:
+  ## If transmission is enabled, Uncomment below volumes ##
+  # tx-config:
+  # tx-watch:
 
 networks:
   mynetwork:
