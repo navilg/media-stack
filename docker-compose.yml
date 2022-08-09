@@ -1,35 +1,35 @@
-version: '2'
+version: "3.9"
 name: media-stack
 services:
+  transmission:
+    profiles:
+      - v1.0
+    container_name: transmission
+    image: lscr.io/linuxserver/transmission:3.00-r5-ls127
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - USER=admin
+      - PASS=nimdatx
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    volumes:
+      - tx-config:/config
+      - torrent-downloads:/downloads
+      - tx-watch:/watch
+    restart: "unless-stopped"
 
-  ## Uncomment to enable transmission as bittorrent client. ##
-  ## Keep one of qbittorrent or transmission ##
-  # transmission:
-  #   container_name: transmission
-  #   image: lscr.io/linuxserver/transmission:3.00-r5-ls127
-  #   networks:
-  #     - mynetwork
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=UTC
-  #     - USER=admin
-  #     - PASS=nimdatx
-  #   ports:
-  #     - 9091:9091
-  #     - 51413:51413
-  #     - 51413:51413/udp
-  #   volumes:
-  #     - tx-config:/config
-  #     - torrent-downloads:/downloads
-  #     - tx-watch:/watch
-  #   restart: "unless-stopped"
-
-  ## Comment qbittorrent service, if transmission is enabled. ##
   ## Default credentials - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
+    profiles:
+      - v2.0
     image: lscr.io/linuxserver/qbittorrent:4.4.3.1-r1-ls209
     networks:
       - mynetwork
@@ -47,6 +47,9 @@ services:
       - 6881:6881/udp
     restart: "unless-stopped"
   radarr:
+    profiles:
+      - v1.0
+      - v2.0
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
     networks:
@@ -63,6 +66,9 @@ services:
     restart: "unless-stopped"
 
   sonarr:
+    profiles:
+      - v1.0
+      - v2.0
     image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls150
     container_name: sonarr
     networks:
@@ -73,12 +79,15 @@ services:
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - torrent-downloads:/downloads #optional
+      - torrent-downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
 
   jackett:
+    profiles:
+      - v1.0
+      - v2.0
     container_name: jackett
     image: lscr.io/linuxserver/jackett:v0.20.1426-ls74
     networks:
@@ -95,6 +104,9 @@ services:
     restart: unless-stopped
 
   jellyfin:
+    profiles:
+      - v1.0
+      - v2.0
     image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls171
     container_name: jellyfin
     networks:
@@ -110,7 +122,7 @@ services:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
       - 8096:8096
-      - 7359:7359/udp #optional
+      - 7359:7359/udp
       - 8920:8920
     restart: unless-stopped
 
@@ -122,9 +134,8 @@ volumes:
   jackett-blackhole:
   jellyfin-config:
   qbittorrent-config:
-  ## If transmission is enabled, Uncomment below volumes ##
-  # tx-config:
-  # tx-watch:
+  tx-config:
+  tx-watch:
 
 networks:
   mynetwork:

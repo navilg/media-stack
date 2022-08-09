@@ -6,10 +6,9 @@ If transmission is chosen, Uncomment transmission service in docker-compose.yml 
 - Run below commands
 
 ```
-bash pre-deploy.sh
-docker-compose up -d
+docker network create mynetwork
+docker-compose --profile v2.0 up -d
 docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL
-bash post-deploy.sh
 ```
 
 # Configure Transmission / qBittorrent
