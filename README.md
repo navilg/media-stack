@@ -16,6 +16,7 @@ docker-compose --profile stack-1 up -d
 
 # Or, Install Jellyfin, Radarr, Sonarr, Prowlarr, qBitTorrent and VPN stack
 ## By default NordVPN is configured. This can be changed to ExpressVPN, SurfShark, OpenVPN or Wireguard VPN by updating docker-compose.yml file. It uses OpenVPN type for all providers.
+
 VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_REGIONS=Switzerland docker-compose --profile stack-2 up -d
 
 docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
