@@ -10,8 +10,8 @@ services:
       - NET_ADMIN
     environment:
       - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER:-nordvpn} # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
-      - OPENVPN_USER=${OPENVPN_USER?"OPENVPN_USER variable must be set"}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD?"OPENVPN_PASSWORD variable must be set"}
+      - OPENVPN_USER=${OPENVPN_USER:-""}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD:-""}
 
       ## For list of server regions and countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
 
@@ -46,17 +46,17 @@ services:
       - 5080:5080
       - 6881:6881
       - 6881:6881/udp
-      # Transmission ports
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
+      # Transmission ports. Uncomment below if Transmission is used with VPN
+      # - 9091:9091
+      # - 51413:51413
+      # - 51413:51413/udp
   transmission:
     profiles: ["tx", "stack-1"]
     container_name: transmission
     image: lscr.io/linuxserver/transmission:3.00-r5-ls127
     networks:
       - mynetwork
-    network_mode: service:vpn # Comment this line if vpn is disabled
+    # network_mode: service:vpn # Uncomment this line if vpn is enabled
     environment:
       - PUID=1000
       - PGID=1000
@@ -64,11 +64,11 @@ services:
       - USER=admin
       - PASS=nimdatx
 
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 9091:9091
-    #   - 51413:51413
-    #   - 51413:51413/udp
+    ## Comment below ports if VPN is enabled.
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
     volumes:
       - tx-config:/config
       - torrent-downloads:/downloads
