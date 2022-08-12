@@ -1,28 +1,106 @@
-version: '2'
+version: "3.9"
 name: media-stack
 services:
+  vpn:
+  ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
+    profiles: ["vpn", "stack-2"]
+    container_name: vpn
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER:-nordvpn} # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
+      - OPENVPN_USER=${OPENVPN_USER?"OPENVPN_USER variable must be set"}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD?"OPENVPN_PASSWORD variable must be set"}
+
+      ## For list of server regions and countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
+
+      ## SERVER_REGIONS is required for NordVPN and Surfshark VPN. Comment SERVER_COUNTRIES if SERVER_REGIONS is used.
+      - SERVER_REGIONS=${SERVER_REGIONS:-Switzerland}
+    
+      ## SERVER_COUNTRIES is required for ExpressVPN and ProtonVPN. Comment SERVER_REGIONS if SERVER_COUNTRIES is used.
+      # - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Netherlands} 
+
+      ## Enable below if VPN_SERVICE_PROVIDER=custom
+      # - VPN_TYPE=openvpn # or wiregiuard. 
+
+      ## If VPN_TYPE is openvpn
+      # - OPENVPN_CUSTOM_CONFIG=/gluetun/custom.conf
+
+      ## If VPN_TYPE is wireguard. Replace below env variables as required.
+      # - VPN_ENDPOINT_IP=1.2.3.4                                               # Replace with your wg endpoint ip or domain
+      # - VPN_ENDPOINT_PORT=51820                                               # Replace with wg server port
+      # - WIREGUARD_PUBLIC_KEY=wAUaJMhAq3NFutLHIdF8AN0B5WG8RndfQKLPTEDHal0=     # Replace with your wg public key
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=    # Replace with your wg client private key
+      # - WIREGUARD_PRESHARED_KEY=xOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=  # Replaced with your wg pre-shared key
+      # - WIREGUARD_ADDRESSES="10.64.222.21/32"                                 # Replace with wg address
+
+    ## Enable volume if custom VPN_SERVICE_PROVIDER is used
+    # volumes:
+      # - /yourpath/yourconfig.conf:/gluetun/config.conf:ro
+
+    networks:
+      - mynetwork
+    ports:
+      # qbittorrent ports
+      - 5080:5080
+      - 6881:6881
+      - 6881:6881/udp
+      # Transmission ports
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
   transmission:
+    profiles: ["tx", "stack-1"]
     container_name: transmission
     image: lscr.io/linuxserver/transmission:3.00-r5-ls127
     networks:
       - mynetwork
+    network_mode: service:vpn # Comment this line if vpn is disabled
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
       - USER=admin
       - PASS=nimdatx
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
+
+    ## Uncomment below ports if VPN is disabled.
+    # ports:
+    #   - 9091:9091
+    #   - 51413:51413
+    #   - 51413:51413/udp
     volumes:
       - tx-config:/config
-      - tx-downloads:/downloads
+      - torrent-downloads:/downloads
       - tx-watch:/watch
     restart: "unless-stopped"
 
+  ## Default credentials - Username: admin password: adminadmin ##
+  ## Change password after install from UI --> Tools --> Options --> WebUI ##
+  qbittorrent:
+    container_name: qbittorrent
+    profiles: ["qbt", "stack-2"]
+    image: lscr.io/linuxserver/qbittorrent:4.4.3.1-r1-ls209
+    networks:
+      - mynetwork
+    network_mode: service:vpn # Comment this line if vpn is disabled
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - WEBUI_PORT=5080
+    volumes:
+      - qbittorrent-config:/config
+      - torrent-downloads:/downloads
+
+    ## Uncomment below ports if VPN is disabled.
+    # ports:
+    #   - 5080:5080
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    restart: "unless-stopped"
   radarr:
+    profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
     networks:
@@ -35,10 +113,11 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - tx-downloads:/downloads
+      - torrent-downloads:/downloads
     restart: "unless-stopped"
 
   sonarr:
+    profiles: ["base", "sonarr", "stack-1", "stack-2"]
     image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls150
     container_name: sonarr
     networks:
@@ -49,12 +128,13 @@ services:
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - tx-downloads:/downloads #optional
+      - torrent-downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
 
   jackett:
+    profiles: ["jackett", "stack-1"]
     container_name: jackett
     image: lscr.io/linuxserver/jackett:v0.20.1426-ls74
     networks:
@@ -70,7 +150,24 @@ services:
       - 9117:9117
     restart: unless-stopped
 
+  prowlarr:
+    profiles: ["prowlarr", "stack-2"]
+    container_name: prowlarr
+    image: linuxserver/prowlarr:develop-0.4.3.1921-ls62
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - prowlarr-config:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+
   jellyfin:
+    profiles: ["base", "jelly", "stack-1", "stack-2"]
     image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls171
     container_name: jellyfin
     networks:
@@ -81,24 +178,26 @@ services:
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - tx-downloads:/data
+      - torrent-downloads:/data
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
       - 8096:8096
-      - 7359:7359/udp #optional
+      - 7359:7359/udp
       - 8920:8920
     restart: unless-stopped
 
 volumes:
-  tx-config:
-  tx-downloads:
-  tx-watch:
+  torrent-downloads:
   radarr-config:
   sonarr-config:
   jackett-config:
   jackett-blackhole:
+  prowlarr-config:
   jellyfin-config:
+  qbittorrent-config:
+  tx-config:
+  tx-watch:
 
 networks:
   mynetwork:
