@@ -1,18 +1,22 @@
 # Install media stack
 
-If transmission is chosen, Uncomment transmission service in docker-compose.yml file
+There are two media stacks available.
 
-- Change transmission password in docker-compose.yml file
-- Run below commands
+`stack-1` This stack contains Jellyfin, Radarr, Sonarr, Jackett and Transmission.
+
+`stack-2` This stack contains Jellyfin, Radarr, Sonarr, Prowlarr, qBitTorrent and VPN.
+
+Any one of them can be deployed using --profile option with docker-compose.
 
 ```
 docker network create mynetwork
 
 # Install Jellyfin, Radarr, Sonarr, Jackett and Transmission stack
-docker-compose --profile v1.0 up -d
+docker-compose --profile stack-1 up -d
 
-# Or, Install Jellyfin, Radarr, Sonarr, Prowlarr and qBitTorrent stack
-docker-compose --profile v2.0 up -d
+# Or, Install Jellyfin, Radarr, Sonarr, Prowlarr, qBitTorrent and VPN stack
+## By default NordVPN is configured. This can be changed to ExpressVPN, SurfShark, OpenVPN or Wireguard VPN by updating docker-compose.yml file. It uses OpenVPN type for all providers.
+VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_REGIONS=Switzerland docker-compose --profile stack-2 up -d
 
 docker-compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
@@ -49,7 +53,7 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 - Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
 - Settings --> Indexers --> Add --> Add Rarbg indexer --> Add minimum seeder (4) --> Test --> Save
 - Settings --> Indexers --> Add --> Torznab --> Follow steps from Jackett to add indexer
-- Settings --> Download clients --> Transmission --> Add Host (transmission / qbittorrent) and port (9091 / 5080) --> Username and password if added --> Test --> Save
+- Settings --> Download clients --> Transmission --> Add Host (transmission / qbittorrent) and port (9091 / 5080) --> Username and password if added --> Test --> Save **Note: If VPN is enabled, then transmission / qbittorrent is reachable on vpn's service name**
 - Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
 
 # Add a movie
@@ -206,6 +210,8 @@ location ^~ /transmission {
 }
 ```
 
+**Note: If VPN is enabled, then transmission is reachable on vpn's service name**
+
 # qBittorrent Nginx proxy
 
 ```
@@ -219,6 +225,8 @@ location /qbt/ {
     proxy_cookie_path  /                  "/; Secure";
 }
 ```
+
+**Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name**
 
 # Jellyfin Nginx proxy
 
