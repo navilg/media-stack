@@ -19,7 +19,8 @@ services:
       - SERVER_REGIONS=${SERVER_REGIONS:-Switzerland}
     
       ## SERVER_COUNTRIES is required for ExpressVPN and ProtonVPN. Comment SERVER_REGIONS if SERVER_COUNTRIES is used.
-      # - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Netherlands} 
+      # - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Netherlands}
+      # - FREE_ONLY=on  # Valid with protonvpn only. on if using free service provided by protonvpn
 
       ## Enable below if VPN_SERVICE_PROVIDER=custom
       # - VPN_TYPE=openvpn # or wiregiuard. 
