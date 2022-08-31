@@ -55,7 +55,7 @@ services:
   transmission:
     profiles: ["tx", "stack-1"]
     container_name: transmission
-    image: lscr.io/linuxserver/transmission:3.00-r5-ls127
+    image: lscr.io/linuxserver/transmission:3.00-r5-ls134
     networks:
       - mynetwork
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
@@ -104,7 +104,7 @@ services:
   radarr:
     profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.1.0.6175-ls146
+    image: lscr.io/linuxserver/radarr:4.1.0.6175-ls151
     networks:
       - mynetwork
     environment:
@@ -120,7 +120,7 @@ services:
 
   sonarr:
     profiles: ["base", "sonarr", "stack-1", "stack-2"]
-    image: lscr.io/linuxserver/sonarr:3.0.8.1507-ls150
+    image: lscr.io/linuxserver/sonarr:3.0.9.1549-ls154
     container_name: sonarr
     networks:
       - mynetwork
@@ -138,7 +138,7 @@ services:
   jackett:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
-    image: lscr.io/linuxserver/jackett:v0.20.1426-ls74
+    image: lscr.io/linuxserver/jackett:v0.20.1819-ls74
     networks:
       - mynetwork
     environment:
@@ -155,7 +155,7 @@ services:
   prowlarr:
     profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:develop-0.4.3.1921-ls62
+    image: linuxserver/prowlarr:develop-0.4.4.1947-ls65
     networks:
       - mynetwork
     environment:
@@ -170,7 +170,7 @@ services:
 
   jellyfin:
     profiles: ["base", "jelly", "stack-1", "stack-2"]
-    image: lscr.io/linuxserver/jellyfin:10.8.1-1-ls171
+    image: lscr.io/linuxserver/jellyfin:10.8.4-1-ls177
     container_name: jellyfin
     networks:
       - mynetwork
