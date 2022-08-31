@@ -73,8 +73,8 @@ services:
       - 51413:51413/udp
     volumes:
       - tx-config:/config
-      - ./media-stack-volumes/torrent-downloads:/downloads
-      - ./media-stack-volumes/tx-watch:/watch
+      - $HOME/media-stack-volumes/torrent-downloads:/downloads
+      - $HOME/media-stack-volumes/tx-watch:/watch
     restart: "unless-stopped"
 
   ## Default credentials - Username: admin password: adminadmin ##
@@ -93,7 +93,7 @@ services:
       - WEBUI_PORT=5080
     volumes:
       - qbittorrent-config:/config
-      - ./media-stack-volumes/torrent-downloads:/downloads
+      - $HOME/media-stack-volumes/torrent-downloads:/downloads
 
     ## Uncomment below ports if VPN is disabled.
     # ports:
@@ -115,7 +115,7 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - ./media-stack-volumes/torrent-downloads:/downloads
+      - $HOME/media-stack-volumes/torrent-downloads:/downloads
     restart: "unless-stopped"
 
   sonarr:
@@ -130,7 +130,7 @@ services:
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - ./media-stack-volumes/torrent-downloads:/downloads
+      - $HOME/media-stack-volumes/torrent-downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -147,7 +147,7 @@ services:
       - TZ=UTC
     volumes:
       - jackett-config:/config
-      - ./media-stack-volumes/jackett-blackhole:/downloads
+      - $HOME/media-stack-volumes/jackett-blackhole:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -180,7 +180,7 @@ services:
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - ./media-stack-volumes/torrent-downloads:/data
+      - $HOME/media-stack-volumes/torrent-downloads:/data
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
