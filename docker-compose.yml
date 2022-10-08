@@ -104,7 +104,7 @@ services:
   radarr:
     profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.1.0.6175-ls151
+    image: lscr.io/linuxserver/radarr:4.2.4.6635-ls153
     networks:
       - mynetwork
     environment:
