@@ -138,7 +138,7 @@ services:
   jackett:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
-    image: lscr.io/linuxserver/jackett:v0.20.1819-ls74
+    image: lscr.io/linuxserver/jackett:v0.20.2093-ls77
     networks:
       - mynetwork
     environment:
