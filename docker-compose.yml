@@ -55,7 +55,7 @@ services:
   transmission:
     profiles: ["tx", "stack-1"]
     container_name: transmission
-    image: lscr.io/linuxserver/transmission:3.00-r5-ls134
+    image: lscr.io/linuxserver/transmission:3.00-r5-ls137
     networks:
       - mynetwork
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
