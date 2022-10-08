@@ -82,7 +82,7 @@ services:
   qbittorrent:
     container_name: qbittorrent
     profiles: ["qbt", "stack-2"]
-    image: lscr.io/linuxserver/qbittorrent:4.4.3.1-r1-ls209
+    image: lscr.io/linuxserver/qbittorrent:4.4.5-r0-ls219
     networks:
       - mynetwork
     network_mode: service:vpn # Comment this line if vpn is disabled
