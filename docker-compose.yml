@@ -83,6 +83,9 @@ services:
     container_name: qbittorrent
     profiles: ["qbt", "stack-2"]
     image: lscr.io/linuxserver/qbittorrent:4.4.5-r0-ls219
+    # Comment this if vpn is disabled
+    depends_on:
+      - vpn
     networks:
       - mynetwork
     network_mode: service:vpn # Comment this line if vpn is disabled
@@ -156,6 +159,10 @@ services:
     profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
     image: linuxserver/prowlarr:develop-0.4.6.1969-ls69
+    # Comment this if vpn is disabled
+    depends_on:
+      - vpn
+    network_mode: service:vpn # Comment this line if vpn is disabled
     networks:
       - mynetwork
     environment:
