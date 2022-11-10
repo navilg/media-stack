@@ -47,6 +47,8 @@ services:
       - 5080:5080
       - 6881:6881
       - 6881:6881/udp
+      # prowlarr ports
+      - 9696:9696
       # Transmission ports. Uncomment below if Transmission is used with VPN
       # - 9091:9091
       # - 51413:51413
@@ -171,8 +173,9 @@ services:
       - TZ=UTC
     volumes:
       - prowlarr-config:/config
-    ports:
-      - 9696:9696
+    ## Uncomment below ports if VPN is disabled.
+    # ports:
+    #   - 9696:9696
     restart: unless-stopped
 
   jellyfin:
