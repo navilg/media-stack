@@ -57,7 +57,7 @@ services:
   transmission:
     profiles: ["tx", "stack-1"]
     container_name: transmission
-    image: lscr.io/linuxserver/transmission:3.00-r6
+    image: linuxserver/transmission:version-3.00-r8
     networks:
       - mynetwork
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
@@ -84,7 +84,7 @@ services:
   qbittorrent:
     container_name: qbittorrent
     profiles: ["qbt", "stack-2"]
-    image: lscr.io/linuxserver/qbittorrent:4.5.0
+    image: linuxserver/qbittorrent:4.5.0
     # Comment this if vpn is disabled
     depends_on:
       - vpn
@@ -109,7 +109,7 @@ services:
   radarr:
     profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.2.4
+    image: linuxserver/radarr:4.3.2
     networks:
       - mynetwork
     environment:
@@ -125,7 +125,7 @@ services:
 
   sonarr:
     profiles: ["base", "sonarr", "stack-1", "stack-2"]
-    image: lscr.io/linuxserver/sonarr:develop-version-4.0.0.269
+    image: linuxserver/sonarr:develop-version-4.0.0.334
     container_name: sonarr
     networks:
       - mynetwork
@@ -143,7 +143,7 @@ services:
   jackett:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
-    image: lscr.io/linuxserver/jackett:v0.20.2309
+    image: linuxserver/jackett:0.20.2489
     networks:
       - mynetwork
     environment:
@@ -160,7 +160,7 @@ services:
   prowlarr:
     profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:0.4.9-develop
+    image: linuxserver/prowlarr:1.0.1-develop
     # Comment this if vpn is disabled
     depends_on:
       - vpn
@@ -180,7 +180,7 @@ services:
 
   jellyfin:
     profiles: ["base", "jelly", "stack-1", "stack-2"]
-    image: lscr.io/linuxserver/jellyfin:10.8.8
+    image: linuxserver/jellyfin:10.8.8
     container_name: jellyfin
     networks:
       - mynetwork
