@@ -180,7 +180,7 @@ services:
 
   jellyfin:
     profiles: ["base", "jelly", "stack-1", "stack-2"]
-    image: linuxserver/jellyfin:10.8.8
+    image: linuxserver/jellyfin:10.8.9
     container_name: jellyfin
     networks:
       - mynetwork
