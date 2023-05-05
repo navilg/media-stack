@@ -33,6 +33,16 @@ VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=open
 docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 
+We can also customise our stack using `--profile` flag in docker compose. For example, To deploy a stack of Radarr, Sonarr, Jellyfin, Prowlarr and Transmisssion.
+
+```
+docker network create mynetwork
+docker compose --profile radarr --profile sonarr --profile jelly --profile tx --profile prowlarr up -d
+
+# OR, COMPOSE_PROFILES environment variable can be used as below
+COMPOSE_PROFILES=sonarr,radarr,jelly,tx,prowlarr docker compose up -d
+```
+
 ## Configure Transmission / qBittorrent
 
 For qBitTorrent, 
