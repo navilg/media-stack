@@ -4,8 +4,9 @@ A stack of self-hosted media managers and streamer along with VPN.
 
 ## Requirements
 
-- Docker version 23.0.5
-- Docker compose version v2.17.3
+- Docker version 23.0.5 and above
+- Docker compose version v2.17.3 and above
+- It may also work on some of lower versions, but its not tested.
 
 ## Install media stack
 
