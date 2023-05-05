@@ -5,7 +5,7 @@ services:
   ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
     profiles: ["vpn", "stack-2"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.32
+    image: qmcgaw/gluetun:v3.33
     cap_add:
       - NET_ADMIN
     environment:
@@ -57,7 +57,7 @@ services:
   transmission:
     profiles: ["tx", "stack-1"]
     container_name: transmission
-    image: linuxserver/transmission:4.0.2
+    image: linuxserver/transmission:4.0.3
     networks:
       - mynetwork
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
@@ -109,7 +109,7 @@ services:
   radarr:
     profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
-    image: linuxserver/radarr:4.3.2
+    image: linuxserver/radarr:4.4.4
     networks:
       - mynetwork
     environment:
@@ -143,7 +143,7 @@ services:
   jackett:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
-    image: linuxserver/jackett:0.20.3670
+    image: linuxserver/jackett:0.20.4078
     networks:
       - mynetwork
     environment:
@@ -160,7 +160,7 @@ services:
   prowlarr:
     profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.3.1-develop
+    image: linuxserver/prowlarr:1.4.1-develop
     # Comment this if vpn is disabled
     depends_on:
       - vpn
@@ -180,7 +180,7 @@ services:
 
   jellyfin:
     profiles: ["base", "jelly", "stack-1", "stack-2"]
-    image: linuxserver/jellyfin:10.8.9
+    image: linuxserver/jellyfin:10.8.10
     container_name: jellyfin
     networks:
       - mynetwork
