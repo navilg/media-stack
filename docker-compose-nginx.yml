@@ -2,7 +2,7 @@ version: '2'
 name: nginx
 services:
   nginx:
-    image: nginx:1.24.0-alpine
+    image: nginx:1.25.1-alpine
     container_name: nginx
     networks:
       - mynetwork
