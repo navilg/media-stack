@@ -58,8 +58,11 @@ services:
     profiles: ["tx", "stack-1"]
     container_name: transmission
     image: linuxserver/transmission:4.0.3
-    networks:
-      - mynetwork
+    # Unomment this if vpn is enabled
+    # depends_on: 
+    #  - vpn
+    networks:         # Comment this line if vpn is enabled
+      - mynetwork     # Comment this line if vpn is enabled
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
     environment:
       - PUID=1000
@@ -86,10 +89,10 @@ services:
     profiles: ["qbt", "stack-2"]
     image: linuxserver/qbittorrent:4.5.2
     # Comment this if vpn is disabled
-    depends_on:
-      - vpn
-    networks:
-      - mynetwork
+    depends_on:               # Comment this line if vpn is disabled
+      - vpn                   # Comment this line if vpn is disabled
+    # networks:               # Uncomment this line if vpn is disabled
+    #   - mynetwork           # Uncomment this line if vpn is disabled
     network_mode: service:vpn # Comment this line if vpn is disabled
     environment:
       - PUID=1000
@@ -144,6 +147,10 @@ services:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
     image: linuxserver/jackett:0.20.4078
+    # Uncomment this if vpn is enabled
+    # depends_on:               # Uncomment this line if vpn is enabled
+    #   - vpn                   # Uncomment this line if vpn is enabled
+    # network_mode: service:vpn # Uncomment this line if vpn is enabled
     networks:
       - mynetwork
     environment:
@@ -162,11 +169,11 @@ services:
     container_name: prowlarr
     image: linuxserver/prowlarr:1.4.1-develop
     # Comment this if vpn is disabled
-    depends_on:
-      - vpn
+    depends_on:               # Comment this line if vpn is disabled
+      - vpn                   # Comment this line if vpn is disabled
     network_mode: service:vpn # Comment this line if vpn is disabled
-    networks:
-      - mynetwork
+    # networks:               # Uncomment this line if vpn is disabled
+    #   - mynetwork           # Uncomment this line if vpn is disabled
     environment:
       - PUID=1000
       - PGID=1000
