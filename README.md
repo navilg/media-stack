@@ -74,7 +74,6 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 
 - Open Radarr at http://localhost:7878
 - Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
-- Settings --> Indexers --> Add --> Add Rarbg indexer --> Add minimum seeder (4) --> Test --> Save
 - Settings --> Indexers --> Add --> Torznab --> Follow steps from Jackett to add indexer
 - Settings --> Download clients --> Transmission --> Add Host (transmission / qbittorrent) and port (9091 / 5080) --> Username and password if added --> Test --> Save **Note: If VPN is enabled, then transmission / qbittorrent is reachable on vpn's service name**
 - Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
