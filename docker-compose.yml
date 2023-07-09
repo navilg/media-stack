@@ -41,7 +41,7 @@ services:
       # - /yourpath/yourconfig.conf:/gluetun/config.conf:ro
 
     networks:
-      - mynetwork
+      - fuji-docker-network
     ports:
       # qbittorrent ports
       - 5080:5080
@@ -62,7 +62,7 @@ services:
     # depends_on: 
     #  - vpn
     networks:         # Comment this line if vpn is enabled
-      - mynetwork     # Comment this line if vpn is enabled
+      - fuji-docker-network     # Comment this line if vpn is enabled
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
     environment:
       - PUID=1000
@@ -89,11 +89,11 @@ services:
     profiles: ["qbt", "stack-2"]
     image: lscr.io/linuxserver/qbittorrent:4.5.3
     # Comment this if vpn is disabled
-    depends_on:               # Comment this line if vpn is disabled
-      - vpn                   # Comment this line if vpn is disabled
-    # networks:               # Uncomment this line if vpn is disabled
-    #   - mynetwork           # Uncomment this line if vpn is disabled
-    network_mode: service:vpn # Comment this line if vpn is disabled
+    # depends_on:               # Comment this line if vpn is disabled
+    #   - vpn                   # Comment this line if vpn is disabled
+    networks:               # Uncomment this line if vpn is disabled
+      - fuji-docker-network           # Uncomment this line if vpn is disabled
+    # network_mode: service:vpn # Comment this line if vpn is disabled
     environment:
       - PUID=1000
       - PGID=1000
@@ -114,7 +114,7 @@ services:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.5.2
     networks:
-      - mynetwork
+      - fuji-docker-network
     environment:
       - PUID=1000
       - PGID=1000
@@ -131,7 +131,7 @@ services:
     image: linuxserver/sonarr:4.0.0-develop
     container_name: sonarr
     networks:
-      - mynetwork
+      - fuji-docker-network
     environment:
       - PUID=1000
       - PGID=1000
@@ -152,7 +152,7 @@ services:
     #   - vpn                   # Uncomment this line if vpn is enabled
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
     networks:
-      - mynetwork
+      - fuji-docker-network
     environment:
       - PUID=1000
       - PGID=1000
@@ -169,20 +169,20 @@ services:
     container_name: prowlarr
     image: linuxserver/prowlarr:1.6.0-develop
     # Comment this if vpn is disabled
-    depends_on:               # Comment this line if vpn is disabled
-      - vpn                   # Comment this line if vpn is disabled
-    network_mode: service:vpn # Comment this line if vpn is disabled
-    # networks:               # Uncomment this line if vpn is disabled
-    #   - mynetwork           # Uncomment this line if vpn is disabled
+    # depends_on:               # Comment this line if vpn is disabled
+    #   - vpn                   # Comment this line if vpn is disabled
+    # network_mode: service:vpn # Comment this line if vpn is disabled
+    networks:               # Uncomment this line if vpn is disabled
+      - fuji-docker-network           # Uncomment this line if vpn is disabled
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
       - prowlarr-config:/config
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 9696:9696
+    # Uncomment below ports if VPN is disabled.
+    ports:
+      - 9696:9696
     restart: unless-stopped
 
   jellyfin:
@@ -190,7 +190,7 @@ services:
     image: linuxserver/jellyfin:10.8.10
     container_name: jellyfin
     networks:
-      - mynetwork
+      - fuji-docker-network
     environment:
       - PUID=1000
       - PGID=1000
@@ -214,7 +214,7 @@ services:
   #   image: linuxshots/cleanmyarr:0.4.1-beta
   #   container_name: cleanmyarr
   #   networks:
-  #     - mynetwork
+  #     - fuji-docker-network
   #   volumes:
   #     - cleanmyarr-config:/config
   #   restart: unless-stopped
@@ -232,5 +232,5 @@ volumes:
   tx-watch:
 
 networks:
-  mynetwork:
+  fuji-docker-network:
     external: true
