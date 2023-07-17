@@ -5,7 +5,7 @@ services:
   ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
     profiles: ["vpn", "stack-2"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.34
+    image: qmcgaw/gluetun:v3.35.0
     cap_add:
       - NET_ADMIN
     environment:
@@ -87,7 +87,7 @@ services:
   qbittorrent:
     container_name: qbittorrent
     profiles: ["qbt", "stack-2"]
-    image: lscr.io/linuxserver/qbittorrent:4.5.3
+    image: lscr.io/linuxserver/qbittorrent:4.5.4
     # Comment this if vpn is disabled
     depends_on:               # Comment this line if vpn is disabled
       - vpn                   # Comment this line if vpn is disabled
@@ -112,7 +112,7 @@ services:
   radarr:
     profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.5.2
+    image: lscr.io/linuxserver/radarr:4.6.4
     networks:
       - mynetwork
     environment:
@@ -146,7 +146,7 @@ services:
   jackett:
     profiles: ["jackett", "stack-1"]
     container_name: jackett
-    image: lscr.io/linuxserver/jackett:0.21.241
+    image: lscr.io/linuxserver/jackett:0.21.462
     # Uncomment this if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
     #   - vpn                   # Uncomment this line if vpn is enabled
@@ -167,7 +167,7 @@ services:
   prowlarr:
     profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.6.0-develop
+    image: linuxserver/prowlarr:1.6.3
     # Comment this if vpn is disabled
     depends_on:               # Comment this line if vpn is disabled
       - vpn                   # Comment this line if vpn is disabled
