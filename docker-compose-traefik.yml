@@ -1,0 +1,49 @@
+version: "3.3"
+services:
+  traefik:
+    image: traefik:v2.10.4
+    container_name: traefik
+    command:
+
+      - --api.dashboard=true
+      - --providers.docker=true
+      - --accesslog=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=mynetwork
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=${LE_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpChallenge.entrypoint=web
+      - --certificatesresolvers.le.acme.httpChallenge=true
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.traefik.tls=true
+      - traefik.http.routers.traefik.tls.certresolver=le
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.services.api.loadbalancer.server.port=8080
+      - traefik.http.routers.traefik.tls.domains[0].main=${DOMAIN}
+      - traefik.http.routers.traefik.middlewares=frontend
+      - traefik.http.middlewares.frontend.basicAuth.users=${HASHED_ADMIN_USER_PASS}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-le:/letsencrypt
+    networks:
+      - mynetwork
+
+
+volumes:
+  traefik-le:
+
+networks:
+  mynetwork:
+    external: true
+
+# Generate HASHED_ADMIN_USER_PASS using below command
+# htpasswd -B -C 10 -c .htpasswd user1
+# cat .htpasswd | sed -e s/\\$/\\$\\$/g
