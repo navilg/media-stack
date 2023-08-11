@@ -15,11 +15,8 @@ services:
 
       ## For list of server regions and countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
 
-      ## SERVER_REGIONS is required for NordVPN and Surfshark VPN. Comment SERVER_COUNTRIES if SERVER_REGIONS is used.
-      - SERVER_REGIONS=${SERVER_REGIONS:-Switzerland}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Switzerland}
     
-      ## SERVER_COUNTRIES is required for ExpressVPN and ProtonVPN. Comment SERVER_REGIONS if SERVER_COUNTRIES is used.
-      # - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Netherlands}
       # - FREE_ONLY=on  # Valid with protonvpn only. on if using free service provided by protonvpn
 
       ## Enable below if VPN_SERVICE_PROVIDER=custom
