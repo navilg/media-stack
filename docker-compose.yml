@@ -3,7 +3,7 @@ name: media-stack
 services:
   vpn:
   ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
-    profiles: ["vpn", "stack-2"]
+    profiles: ["vpn"]
     container_name: vpn
     image: qmcgaw/gluetun:v3.35.0
     cap_add:
@@ -46,44 +46,12 @@ services:
       - 6881:6881/udp
       # prowlarr ports
       - 9696:9696
-      # Transmission ports. Uncomment below if Transmission is used with VPN
-      # - 9091:9091
-      # - 51413:51413
-      # - 51413:51413/udp
-    restart: "unless-stopped"
-  transmission:
-    profiles: ["tx", "stack-1"]
-    container_name: transmission
-    image: linuxserver/transmission:4.0.3
-    # Unomment this if vpn is enabled
-    # depends_on: 
-    #  - vpn
-    networks:         # Comment this line if vpn is enabled
-      - mynetwork     # Comment this line if vpn is enabled
-    # network_mode: service:vpn # Uncomment this line if vpn is enabled
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=UTC
-      - USER=admin
-      - PASS=nimdatx
-
-    ## Comment below ports if VPN is enabled.
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
-    volumes:
-      - tx-config:/config
-      - torrent-downloads:/downloads
-      - tx-watch:/watch
     restart: "unless-stopped"
 
   ## Default credentials - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
-    profiles: ["qbt", "stack-2"]
     image: lscr.io/linuxserver/qbittorrent:4.5.4
     # Comment this if vpn is disabled
     depends_on:               # Comment this line if vpn is disabled
@@ -107,7 +75,6 @@ services:
     #   - 6881:6881/udp
     restart: "unless-stopped"
   radarr:
-    profiles: ["base", "radarr", "stack-1", "stack-2"]
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.6.4
     networks:
@@ -124,7 +91,6 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    profiles: ["base", "sonarr", "stack-1", "stack-2"]
     image: linuxserver/sonarr:4.0.0-develop
     container_name: sonarr
     networks:
@@ -140,29 +106,7 @@ services:
       - 8989:8989
     restart: unless-stopped
 
-  jackett:
-    profiles: ["jackett", "stack-1"]
-    container_name: jackett
-    image: lscr.io/linuxserver/jackett:0.21.462
-    # Uncomment this if vpn is enabled
-    # depends_on:               # Uncomment this line if vpn is enabled
-    #   - vpn                   # Uncomment this line if vpn is enabled
-    # network_mode: service:vpn # Uncomment this line if vpn is enabled
-    networks:
-      - mynetwork
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=UTC
-    volumes:
-      - jackett-config:/config
-      - jackett-blackhole:/downloads
-    ports:
-      - 9117:9117
-    restart: unless-stopped
-
   prowlarr:
-    profiles: ["prowlarr", "stack-2"]
     container_name: prowlarr
     image: linuxserver/prowlarr:1.6.3
     # Comment this if vpn is disabled
@@ -183,7 +127,6 @@ services:
     restart: unless-stopped
 
   jellyfin:
-    profiles: ["base", "jelly", "stack-1", "stack-2"]
     image: linuxserver/jellyfin:10.8.10
     container_name: jellyfin
     networks:
@@ -207,7 +150,6 @@ services:
   #   depends_on:
   #     - radarr
   #     - sonarr
-  #   profiles: ["base", "cleanmyarr", "stack-2"]
   #   image: linuxshots/cleanmyarr:0.4.1-beta
   #   container_name: cleanmyarr
   #   networks:
@@ -227,6 +169,7 @@ volumes:
   qbittorrent-config:
   tx-config:
   tx-watch:
+  # cleanmyarr-config:
 
 networks:
   mynetwork:
