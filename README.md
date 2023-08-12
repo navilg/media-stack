@@ -35,10 +35,10 @@ By default, VPN is disabled in `docker-compose.yml`. We just need comment and un
 
 Update the `docker-compose.yml` file as guided in comment messsage in same file and follow below commands to deploy the stack.
 
-To deploy the stack with VPN:
+To deploy the stack with VPN (with nordvpn):
 
 ```bash
-PN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland docker compose --profile vpn up -d
+VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland docker compose --profile vpn up -d
 
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
