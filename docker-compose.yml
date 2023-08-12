@@ -1,6 +1,8 @@
 version: "3.9"
 name: media-stack
 services:
+
+  # To use/enable VPN, Run this compose file with --profile=vpn. Its highly recommended to use VPN.
   vpn:
   ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
     profiles: ["vpn"]
@@ -13,11 +15,11 @@ services:
       - OPENVPN_USER=${OPENVPN_USER:-""}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD:-""}
 
-      ## For list of server regions and countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
+      ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
 
       - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Switzerland}
     
-      # - FREE_ONLY=on  # Valid with protonvpn only. on if using free service provided by protonvpn
+      # - FREE_ONLY=on  # Valid with protonvpn only. Value willbe set "on" if using free subscription provided by protonvpn
 
       ## Enable below if VPN_SERVICE_PROVIDER=custom
       # - VPN_TYPE=openvpn # or wireguard. 
@@ -33,32 +35,40 @@ services:
       # - WIREGUARD_PRESHARED_KEY=xOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=  # Replaced with your wg pre-shared key
       # - WIREGUARD_ADDRESSES="10.64.222.21/32"                                 # Replace with wg address
 
-    ## Enable volume if custom VPN_SERVICE_PROVIDER is used
+    ## Enable volume if VPN_SERVICE_PROVIDER=custom and VPN_TYPE=openvpn is used
     # volumes:
       # - /yourpath/yourconfig.conf:/gluetun/config.conf:ro
 
     networks:
       - mynetwork
-    ports:
-      # qbittorrent ports
-      - 5080:5080
-      - 6881:6881
-      - 6881:6881/udp
-      # prowlarr ports
-      - 9696:9696
+    
+    # Uncomment/enable below ports if VPN is used/enabled
+    # ports:
+    #   # qbittorrent ports
+    #   - 5080:5080
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    #   # prowlarr ports
+    #   - 9696:9696
     restart: "unless-stopped"
 
-  ## Default credentials - Username: admin password: adminadmin ##
+  ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:4.5.4
-    # Comment this if vpn is disabled
-    depends_on:               # Comment this line if vpn is disabled
-      - vpn                   # Comment this line if vpn is disabled
-    # networks:               # Uncomment this line if vpn is disabled
-    #   - mynetwork           # Uncomment this line if vpn is disabled
-    network_mode: service:vpn # Comment this line if vpn is disabled
+
+    # Unomment below if vpn is enabled
+    # depends_on:               # Uncomment this line if vpn is enabled
+    #   - vpn                   # Uncomment this line if vpn is enabled
+
+    # Comment below lines if VPN is enabled
+    networks:               # Comment this line if vpn is enabled
+      - mynetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
+    # network_mode: service:vpn
+    
     environment:
       - PUID=1000
       - PGID=1000
@@ -68,12 +78,13 @@ services:
       - qbittorrent-config:/config
       - torrent-downloads:/downloads
 
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 5080:5080
-    #   - 6881:6881
-    #   - 6881:6881/udp
+    ## Comment/Disable below ports if VPN is enabled
+    ports:
+      - 5080:5080
+      - 6881:6881
+      - 6881:6881/udp
     restart: "unless-stopped"
+
   radarr:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:4.6.4
@@ -109,21 +120,24 @@ services:
   prowlarr:
     container_name: prowlarr
     image: linuxserver/prowlarr:1.6.3
-    # Comment this if vpn is disabled
-    depends_on:               # Comment this line if vpn is disabled
-      - vpn                   # Comment this line if vpn is disabled
-    network_mode: service:vpn # Comment this line if vpn is disabled
-    # networks:               # Uncomment this line if vpn is disabled
-    #   - mynetwork           # Uncomment this line if vpn is disabled
+
+    # Uncomment below if vpn is enabled
+    # depends_on:               # Uncomment this line if vpn is enabled
+    #   - vpn                   # Uncomment this line if vpn is enabled
+    # network_mode: service:vpn # Uncomment this line if vpn is enabled
+
+    networks:               # Comment this line if vpn is enabled
+      - mynetwork           # Comment this line if vpn is enabled
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
       - prowlarr-config:/config
-    ## Uncomment below ports if VPN is disabled.
-    # ports:
-    #   - 9696:9696
+
+    # Comment below ports if VPN is enabled.
+    ports:
+      - 9696:9696
     restart: unless-stopped
 
   jellyfin:
