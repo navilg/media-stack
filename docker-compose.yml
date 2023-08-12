@@ -68,7 +68,7 @@ services:
 
     # Unomment below line if vpn is enabled
     # network_mode: service:vpn
-    
+
     environment:
       - PUID=1000
       - PGID=1000
@@ -176,13 +176,9 @@ volumes:
   torrent-downloads:
   radarr-config:
   sonarr-config:
-  jackett-config:
-  jackett-blackhole:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
-  tx-config:
-  tx-watch:
   # cleanmyarr-config:
 
 networks:
