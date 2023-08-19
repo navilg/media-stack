@@ -74,7 +74,7 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 - Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
 - Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
 
-**Add a movie**
+**Add a movie** (After Prowlarr is configured)
 
 - Movies --> Search for a movie --> Add Root folder (/downloads) --> Quality profile --> Add movie
 - Go to qBittorrent (http://localhost:5080) and see if movie is getting downloaded.
