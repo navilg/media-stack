@@ -70,9 +70,9 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 
 - Open Radarr at http://localhost:7878
 - Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
-- Settings --> Indexers --> Add --> Torznab --> Follow steps from Jackett to add indexer
 - Settings --> Download clients --> Transmission --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name**
 - Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
+- Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
 
 **Add a movie**
 
