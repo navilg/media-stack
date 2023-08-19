@@ -87,7 +87,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:4.6.4
+    image: lscr.io/linuxserver/radarr:4.7.5
     networks:
       - mynetwork
     environment:
