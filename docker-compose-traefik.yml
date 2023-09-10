@@ -16,6 +16,7 @@ services:
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpChallenge.entrypoint=web
       - --certificatesresolvers.le.acme.httpChallenge=true
+      - "--certificatesresolvers.le.acme.preferredChain=ISRG Root X1"
     restart: unless-stopped
     ports:
       - 80:80
