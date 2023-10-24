@@ -93,6 +93,8 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 - Add application, Settings --> Apps --> Add application --> Choose Sonarr or Radarr or any apps to link --> Prowlarr server (http://localhost:9696) --> Radarr server (http://localhost:7878) --> API Key --> Test and Save
 - This will add indexers in respective apps automatically.
 
+**Note: If VPN is enabled, then Prowlarr will not be able to reach radarr and sonarr with localhost or container service name. In that case use static IP for sonarr and radarr and use them in app configuration.**
+
 ## Configure Nginx
 
 - Get inside Nginx container
