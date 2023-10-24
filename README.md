@@ -38,7 +38,7 @@ Update the `docker-compose.yml` file as guided in comment messsage in same file 
 To deploy the stack with VPN (with nordvpn):
 
 ```bash
-VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland docker compose --profile vpn up -d
+VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland RADARR_STATIC_CONTAINER_IP=radarr-container-static-ip SONARR_STATIC_CONTAINER_IP=sonarr-container-static-ip docker compose --profile vpn up -d
 
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```

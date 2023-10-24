@@ -89,7 +89,10 @@ services:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:5.0.3
     networks:
-      - mynetwork
+      - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+    #   mynetwork:
+    #     ipv4_address: ${RADARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
     environment:
       - PUID=1000
       - PGID=1000
@@ -105,7 +108,10 @@ services:
     image: linuxserver/sonarr:4.0.0-develop
     container_name: sonarr
     networks:
-      - mynetwork
+      - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+    #   mynetwork:
+    #     ipv4_address: ${SONARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
     environment:
       - PUID=1000
       - PGID=1000
