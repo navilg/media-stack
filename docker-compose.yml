@@ -7,13 +7,14 @@ services:
   ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.35.0
+    image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
     environment:
-      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER:-nordvpn} # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
-      - OPENVPN_USER=${OPENVPN_USER:-""}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD:-""}
+      - VPN_SERVICE_PROVIDER=expressvpn
+      - OPENVPN_USER=vclassx@gmail.com
+      - OPENVPN_PASSWORD=King_Dorian2099
+      - SERVER_COUNTRIES=Netherlands,Singapore,Germany,Japan,Korea,Canada,Mexico,Greece,France,Italy,Brazil,India,Australia,Spain,Switzerland}
 
       ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
 
