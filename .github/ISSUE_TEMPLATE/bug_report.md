@@ -32,6 +32,7 @@ If applicable, add screenshots to help explain your problem.
 
 ```yaml
 <--- Place Docker compose file here --->
+<--- Replace any sensitive information with dummy values --->
 ```
 
 **Additional context**
