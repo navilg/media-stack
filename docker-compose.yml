@@ -16,7 +16,7 @@ services:
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD:-""}
 
       ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
-
+      ## When VPN_SERVICE_PROVIDER is custom. Comment the below line
       - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Switzerland}
     
       # - FREE_ONLY=on  # Valid with protonvpn only. Value willbe set "on" if using free subscription provided by protonvpn
