@@ -137,7 +137,7 @@ location /radarr {
 - Add below proxy in nginx configuration
 
 ```
-location /radarr {
+location /sonarr {
     proxy_pass http://sonarr:8989;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
