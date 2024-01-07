@@ -27,13 +27,13 @@ docker network create mynetwork
 
 If VPN is enabled, qBittorrent and Prowlarr will be put behind VPN.
 
-By default, NordVPN is configured in `docker-compose.yml` file. This can be updated to use ExpressVPN, SurfShark, Custom OpenVPN or Wireguard VPN. It uses OpenVPN type for all the providers. 
+By default, NordVPN is used in `docker-compose.yml` file. This can be updated to use ExpressVPN, SurfShark, ProtonVPN, Custom OpenVPN or Wireguard VPN. It uses OpenVPN type for all the providers. 
 
 Check respective document of your VPN provider to generate OpenVPN username and password.
 
-By default, VPN is disabled in `docker-compose.yml`. We just need comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
+By default, VPN is disabled in `docker-compose.yml`. We just need to comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
 
-Update the `docker-compose.yml` file as guided in comment messsage in same file and follow below commands to deploy the stack.
+Update the `docker-compose.yml` file as guided per instructions in commit messsages in same file and follow below commands to deploy the stack.
 
 To deploy the stack with VPN (with nordvpn):
 
@@ -43,9 +43,13 @@ VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=open
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 
+*Static container IP address is needed when prowlarr is behind VPN. This is because in this case Prowlar can reach out to Radarr and Sonarr only with their container IP addresses. With static IPs of both, We can configure them in Prowlarr without need of changing it everytime container restarts.*
+
+*This is set using RADARR_STATIC_CONTAINER_IP and SONARR_STATIC_CONTAINER_IP variables.*
+
 **Deploy the stack without VPN**
 
-To deploy the stack with without VPN (highly discouraged), Run below command.
+To deploy the stack without VPN (highly discouraged), Run below command.
 
 ```bash
 docker compose up -d
@@ -70,19 +74,22 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 
 - Open Radarr at http://localhost:7878
 - Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
-- Settings --> Download clients --> Transmission --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name**
-- Settings --> General --> Enable advance setting --> Select AUthentication and add username and password
+- Settings --> Download clients --> qBittorrent --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name. In this case use `vpn` in Host field.**
+- Settings --> General --> Enable advance setting --> Select Authentication and add username and password
 - Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
+
+Sonarr can also be configured in similar way.
 
 **Add a movie** (After Prowlarr is configured)
 
-- Movies --> Search for a movie --> Add Root folder (/downloads) --> Quality profile --> Add movie
-- Go to qBittorrent (http://localhost:5080) and see if movie is getting downloaded.
+- Movies --> Search for a movie --> Add Root folder (/downloads/movies) --> Quality profile --> Add movie
+- All queued movies download can be checked here, Activities --> Queue 
+- Go to qBittorrent (http://localhost:5080) and see if movie is getting downloaded (After movie is queued. This depends on availability of movie in indexers configured in Prowlarr.)
 
 ## Configure Jellyfin
 
 - Open Jellyfin at http://localhost:8096
-- Configure as it asks for first time.
+- When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
 
 ## Configure Prowlarr
@@ -90,10 +97,11 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 - Open Prowlarr at http://localhost:9696
 - Settings --> General --> Authentications --> Select Authentication and add username and password
 - Add Indexers, Indexers --> Add Indexer --> Search for indexer --> Choose base URL --> Test and Save
-- Add application, Settings --> Apps --> Add application --> Choose Sonarr or Radarr or any apps to link --> Prowlarr server (http://localhost:9696) --> Radarr server (http://localhost:7878) --> API Key --> Test and Save
+- Add application, Settings --> Apps --> Add application --> Choose Radarr --> Prowlarr server (http://prowlarr:9696) --> Radarr server (http://radarr:7878) --> API Key --> Test and Save
+- Add application, Settings --> Apps --> Add application --> Choose Sonarr --> Prowlarr server (http://prowlarr:9696) --> Sonarr server (http://sonarr:8989) --> API Key --> Test and Save
 - This will add indexers in respective apps automatically.
 
-**Note: If VPN is enabled, then Prowlarr will not be able to reach radarr and sonarr with localhost or container service name. In that case use static IP for sonarr and radarr and use them in app configuration.**
+**Note: If VPN is enabled, then Prowlarr will not be able to reach radarr and sonarr with localhost or container service name. In that case use static IP for sonarr and radarr in radarr/sonarr server field (for e.g. http://172.19.0.5:8989). Prowlar will also be not reachable with its container/service name. Use `http://vpn:9696` instead in prowlar server field.**
 
 ## Configure Nginx
 
@@ -109,7 +117,7 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 
 - Open port 80 and 443.
 - Get inside Nginx container and install certbot and certbot-nginx `apk add certbot certbot-nginx`
-- Add URL in server block. e.g. `server_name  localhost armdev.navratangupta.in;` in /etc/nginx/conf.d/default.conf
+- Add URL in server block. e.g. `server_name  localhost mediastack.example.com;` in /etc/nginx/conf.d/default.conf
 - Run `certbot --nginx` and provide details asked.
 
 ## Radarr Nginx reverse proxy
