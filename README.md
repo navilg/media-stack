@@ -22,7 +22,8 @@ There are two ways this stack can be deployed.
 Before we deploy the stack, We must create docker network first
 
 ```bash
-docker network create mynetwork
+docker network create --subnet 172.20.0.0/16 mynetwork
+# Update CIDR range as per your IP range availability
 ```
 
 **Deploy the stack with VPN**
