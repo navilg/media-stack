@@ -60,7 +60,7 @@ docker compose up -d
 
 ## Configure qBittorrent
 
-- Open qBitTorrent at http://localhost:5080. Default username:password is admin:adminadmin
+- Open qBitTorrent at http://localhost:5080. Default username is `admin`. Temporary password can be collected from container log `docker logs qbittorrent`
 - Go to Tools --> Options --> WebUI --> Change password
 - Run below commands on the server
 
