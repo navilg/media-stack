@@ -1,3 +1,5 @@
+#run RADARR_STATIC_CONTAINER_IP=172.18.0.5 SONARR_STATIC_CONTAINER_IP=172.18.0.4 JELLYSEERR_STATIC_CONTAINER_IP=172.18.0.6 JELLYFIN_STATIC_CONTAINER_IP=172.18.0.7 docker compose --profile vpn up -d to get working
+
 version: "3.9"
 name: media-stack
 services:
@@ -11,13 +13,19 @@ services:
     cap_add:
       - NET_ADMIN
     environment:
-      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER:-nordvpn} # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
-      - OPENVPN_USER=${OPENVPN_USER:-""}
-      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD:-""}
+      - VPN_SERVICE_PROVIDER=protonvpn # Valid values: nordvpn, expressvpn, protonvpn, surfshark or custom
+      - OPENVPN_USER=iGR1MfVfdf5tl2KW+pmp
+      - OPENVPN_PASSWORD=QIBwH5khQyfhSceQyjqLLjniniFi7OS7
+      #- FIREWALL_VPN_INPUT_PORTS= 5080
+      - VPN_PORT_FORWARDING=ON
+      #- LOG_LEVEL = debug
 
       ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
-      ## When VPN_SERVICE_PROVIDER is custom. Comment the below line
-      - SERVER_COUNTRIES=${SERVER_COUNTRIES:-Switzerland}
+
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES:-United Kingdom}
+      - SERVER_CITIES=${SERVER_COUNTRIES:-London}
+
+      
     
       # - FREE_ONLY=on  # Valid with protonvpn only. Value willbe set "on" if using free subscription provided by protonvpn
 
@@ -43,31 +51,32 @@ services:
       - mynetwork
     
     # Uncomment/enable below ports if VPN is used/enabled
-    # ports:
-    #   # qbittorrent ports
-    #   - 5080:5080
-    #   - 6881:6881
-    #   - 6881:6881/udp
-    #   # prowlarr ports
-    #   - 9696:9696
+    ports:
+      - 8000:8000/tcp
+      # qbittorrent ports
+      - 5080:5080
+      - 6881:6881
+      - 6881:6881/udp
+      # prowlarr ports
+      - 9696:9696
     restart: "unless-stopped"
 
   ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.6.2
+    image: lscr.io/linuxserver/qbittorrent:4.5.5
 
     # Unomment below if vpn is enabled
-    # depends_on:               # Uncomment this line if vpn is enabled
-    #   - vpn                   # Uncomment this line if vpn is enabled
+    depends_on:               # Uncomment this line if vpn is enabled
+      - vpn                   # Uncomment this line if vpn is enabled
 
     # Comment below lines if VPN is enabled
-    networks:               # Comment this line if vpn is enabled
-      - mynetwork           # Comment this line if vpn is enabled
+    # networks:               # Comment this line if vpn is enabled
+    #   - mynetwork           # Comment this line if vpn is enabled
 
     # Unomment below line if vpn is enabled
-    # network_mode: service:vpn
+    network_mode: service:vpn
 
     environment:
       - PUID=1000
@@ -76,23 +85,23 @@ services:
       - WEBUI_PORT=5080
     volumes:
       - qbittorrent-config:/config
-      - torrent-downloads:/downloads
+      - /mnt/usb1/torrent-downloads:/downloads
 
     ## Comment/Disable below ports if VPN is enabled
-    ports:
-      - 5080:5080
-      - 6881:6881
-      - 6881:6881/udp
+    # ports:
+    #   - 5080:5080
+    #   - 6881:6881
+    #   - 6881:6881/udp
     restart: "unless-stopped"
 
   radarr:
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.2.6
+    image: lscr.io/linuxserver/radarr:5.0.3
     networks:
-      - mynetwork   # Comment this line if VPN is enabled
-    ## Uncomment below lines if VPN is enabled
-    #   mynetwork:
-    #     ipv4_address: ${RADARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+      # - mynetwork   # Comment this line if VPN is enabled
+    # Uncomment below lines if VPN is enabled
+      mynetwork:
+        ipv4_address: ${RADARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
     environment:
       - PUID=1000
       - PGID=1000
@@ -101,39 +110,39 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - torrent-downloads:/downloads
+      - /mnt/usb1/torrent-downloads:/downloads
     restart: "unless-stopped"
 
   sonarr:
     image: linuxserver/sonarr:4.0.0-develop
     container_name: sonarr
     networks:
-      - mynetwork   # Comment this line if VPN is enabled
-    ## Uncomment below lines if VPN is enabled
-    #   mynetwork:
-    #     ipv4_address: ${SONARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+      # - mynetwork   # Comment this line if VPN is enabled
+    # Uncomment below lines if VPN is enabled
+      mynetwork:
+        ipv4_address: ${SONARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - torrent-downloads:/downloads
+      - /mnt/usb1/torrent-downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.11.4
+    image: linuxserver/prowlarr:latest
 
-    # Uncomment below if vpn is enabled
-    # depends_on:               # Uncomment this line if vpn is enabled
-    #   - vpn                   # Uncomment this line if vpn is enabled
-    # network_mode: service:vpn # Uncomment this line if vpn is enabled
+    #Uncomment below if vpn is enabled
+    depends_on:               # Uncomment this line if vpn is enabled
+      - vpn                   # Uncomment this line if vpn is enabled
+    network_mode: service:vpn # Uncomment this line if vpn is enabled
 
-    networks:               # Comment this line if vpn is enabled
-      - mynetwork           # Comment this line if vpn is enabled
+    # networks:               # Comment this line if vpn is enabled
+    #   - mynetwork           # Comment this line if vpn is enabled
     environment:
       - PUID=1000
       - PGID=1000
@@ -142,22 +151,23 @@ services:
       - prowlarr-config:/config
 
     # Comment below ports if VPN is enabled.
-    ports:
-      - 9696:9696
+    # ports:
+    #   - 9696:9696
     restart: unless-stopped
 
   jellyfin:
-    image: linuxserver/jellyfin:10.8.13
+    image: linuxserver/jellyfin:10.8.11
     container_name: jellyfin
     networks:
-      - mynetwork
+      mynetwork:
+        ipv4_address: ${JELLYFIN_STATIC_CONTAINER_IP}
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - torrent-downloads:/data
+      - /mnt/usb1/torrent-downloads:/data
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
@@ -165,36 +175,102 @@ services:
       - 7359:7359/udp
       - 8920:8920
     restart: unless-stopped
-  
-  # Doc: https://github.com/navilg/cleanmyarr
-  # cleanmyarr:
-  #   depends_on:
-  #     - radarr
-  #     - sonarr
-  #   image: linuxshots/cleanmyarr:0.8.1
-  #   container_name: cleanmyarr
-  #   networks:
-  #     - mynetwork
-  #   volumes:
-  #     - cleanmyarr-config:/config
-    # restart: unless-stopped
-    # environment:
-    # - CMA_MAINTENANCE_CYCLE=${CMA_MAINTENANCE_CYCLE:-""}
-    # - CMA_DELETE_AFTER_DAYS=${CMA_DELETE_AFTER_DAYS:-""}
-    # - CMA_ENABLE_EMAIL_NOTIFICATION=${CMA_ENABLE_EMAIL_NOTIFICATION:-""}
-    # - CMA_SMTP_USERNAME=${CMA_SMTP_USERNAME:-""}
-    # - CMA_SMTP_ENCODED_PASSWORD=${CMA_SMTP_ENCODED_PASSWORD:-""}
-    # - CMA_SMTP_TO_EMAILS=${CMA_SMTP_TO_EMAILS:-""}
-    # - CMA_ENABLE_GOTIFY_NOTIFICATION=${CMA_ENABLE_GOTIFY_NOTIFICATION:-""}
-    # - CMA_GOTIFY_URL=${CMA_GOTIFY_URL:-""}
-    # - CMA_GOTIFY_ENCODED_APP_TOKEN=${CMA_GOTIFY_ENCODED_APP_TOKEN:-""}
-    # - CMA_ENABLE_TELEGRAM_NOTIFICATION=${CMA_ENABLE_TELEGRAM_NOTIFICATION:-""}
-    # - CMA_TELEGRAM_ENCODED_BOT_TOKEN=${CMA_TELEGRAM_ENCODED_BOT_TOKEN:-""}
-    # - CMA_TELEGRAM_CHAT_ID=${CMA_TELEGRAM_CHAT_ID:-""}
-    # - CMA_MONITOR_RADARR=${CMA_MONITOR_RADARR:-""}
-    # - CMA_RADARR_URL=${CMA_RADARR_URL:-""}
-    # - CMA_RADARR_ENCODED_API_KEY=${CMA_RADARR_ENCODED_API_KEY:-""}
-    # - CMA_RADARR_ENABLE_NOTIFICATION=${CMA_RADARR_ENABLE_NOTIFICATION:-""}
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:1.7.0
+    container_name: jellyseerr
+    networks:
+      mynetwork:
+        ipv4_address: ${JELLYSEERR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    ports:
+      - 5055:5055
+    volumes:
+      - jellyseerr-config:/app/config
+      - /mnt/usb1/torrent-downloads:/data
+    restart: unless-stopped
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    networks:
+      mynetwork:
+        ipv4_address: ${HOMEPAGE_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    ports:
+      - 3000:3000
+    volumes:
+      - homepage-config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # optional, for docker integrations
+      - /mnt/usb1/torrent-downloads:/downloads
+    restart: unless-stopped
+
+  calibre:
+    image: ghcr.io/linuxserver/calibre
+    container_name: calibre
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - calibre-config:/config
+      - /mnt/usb1/torrent-downloads:/data
+    ports:
+      - 8080:8080
+      - 8081:8081
+    restart: unless-stopped
+    networks:
+      mynetwork:
+        ipv4_address: ${CALIBRE_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+
+  calibre-web:
+    image: ghcr.io/linuxserver/calibre-web
+    container_name: calibre-web
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - calibre-web-config:/config
+      - /mnt/usb1/torrent-downloads:/data
+    restart: unless-stopped
+    depends_on:
+      - calibre
+    ports:
+      - 8083:8083
+    networks:
+      mynetwork:
+        ipv4_address: ${CALIBRE_WEB_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+
+  readarr:
+    image: ghcr.io/linuxserver/readarr:nightly
+    container_name: readarr
+    environment:
+      - PUID=1000 #change to your PID
+      - PGID=1000 #change to your PGID
+    volumes:
+      - readarr-config:/config
+      - /mnt/usb1/torrent-downloads:/downloads
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+    networks:
+      mynetwork:
+        ipv4_address: ${READARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+
+  tunnel:
+    container_name: cloudflared-tunnel
+    image: cloudflare/cloudflared
+    networks:
+      - mynetwork
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=eyJhIjoiODgzMWRlZWExMzQ0ZTEyNTFiOTI1ZDhmMzM1MmJmYmYiLCJ0IjoiNjQ3ZDQ3M2ItZjJiNi00ZTlhLWI1NjgtMTRkNDZlZWM5MWQ3IiwicyI6IlpEWmtNRFZsTUdJdE9XWTVaUzAwTjJZNUxXRmtNelF0TVdFeE16ZGhaR1ZrTkdJMSJ9
 
 volumes:
   torrent-downloads:
@@ -203,7 +279,11 @@ volumes:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
-  # cleanmyarr-config:
+  jellyseerr-config:
+  calibre-config:
+  calibre-web-config:
+  readarr-config:
+  homepage-config:
 
 networks:
   mynetwork:
