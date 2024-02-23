@@ -33,6 +33,7 @@ If VPN is enabled, qBittorrent and Prowlarr will be put behind VPN.
 By default, NordVPN is used in `docker-compose.yml` file. This can be updated to use ExpressVPN, SurfShark, ProtonVPN, Custom OpenVPN or Wireguard VPN. It uses OpenVPN type for all the providers. 
 
 Check respective document of your VPN provider to generate OpenVPN username and password.
+Follow https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers to configure gluetun for your VPN provider.
 
 By default, VPN is disabled in `docker-compose.yml`. We just need to comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
 

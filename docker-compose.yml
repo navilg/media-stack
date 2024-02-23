@@ -4,7 +4,7 @@ services:
 
   # To use/enable VPN, Run this compose file with --profile=vpn. Its highly recommended to use VPN.
   vpn:
-  ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
+    ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
     image: qmcgaw/gluetun:v3.37.0
