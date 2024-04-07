@@ -7,7 +7,7 @@ services:
     ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.37.0
+    image: qmcgaw/gluetun:v3.38.0
     cap_add:
       - NET_ADMIN
     environment:
@@ -56,7 +56,7 @@ services:
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.6.3
+    image: lscr.io/linuxserver/qbittorrent:4.6.4
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -105,7 +105,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: linuxserver/sonarr:4.0.1-develop
+    image: linuxserver/sonarr:4.0.3
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -125,7 +125,7 @@ services:
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.13.3
+    image: linuxserver/prowlarr:1.15.0
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
