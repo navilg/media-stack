@@ -59,12 +59,12 @@ To deploy the stack without VPN (highly discouraged), Run below command.
 docker compose up -d
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
-
+#  General Configuration
 ## Configure qBittorrent
 
-- Open qBitTorrent at http://localhost:5080. Default username is `admin`. Temporary password can be collected from container log `docker logs qbittorrent`
-- Go to Tools --> Options --> WebUI --> Change password
-- Run below commands on the server
+- Open qBitTorrent at http://localhost:5080. Default username is `admin` and password `adminadmin`, if not Temporary password can be collected from container log `docker logs qbittorrent`
+- DONE BY DEFAULT  ~~Go to Tools --> Options --> WebUI --> Change password~~
+- DONE BY DEFAULT ~~Run below commands on the server~~
 
 ```bash
 docker exec -it qbittorrent bash # Get inside qBittorrent container
@@ -76,10 +76,10 @@ chown 1000:1000 /downloads/movies /downloads/tvshows
 
 ## Configure Radarr
 
-- Open Radarr at http://localhost:7878
-- Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
-- Settings --> Download clients --> qBittorrent --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name. In this case use `vpn` in Host field.**
-- Settings --> General --> Enable advance setting --> Select Authentication and add username and password
+- Open Radarr at http://localhost:7878 Default username is `admin` and password `adminadmin`
+- DONE BY DEFAULT ~~Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save~~
+- DONE BY DEFAULT ~~Settings --> Download clients --> qBittorrent --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save~~ **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name. In this case use `vpn` in Host field.**
+- DONE BY DEFAULT ~~Settings --> General --> Enable advance setting --> Select Authentication and add username and password~~
 - Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
 
 Sonarr can also be configured in similar way.
@@ -90,6 +90,14 @@ Sonarr can also be configured in similar way.
 - All queued movies download can be checked here, Activities --> Queue 
 - Go to qBittorrent (http://localhost:5080) and see if movie is getting downloaded (After movie is queued. This depends on availability of movie in indexers configured in Prowlarr.)
 
+##  Configure Sonnar
+
+-  Open Sonnar at http://localhost:8989 
+-  SET Default credentials of Sonnar
+-  DONE BY DEFAULT ~~Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save~~
+-  DONE BY DEFAULT ~~Settings --> Download clients --> qBittorrent --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save~~ **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name. In this case use `vpn` in Host field.**
+-  Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
+
 ## Configure Jellyfin
 
 - Open Jellyfin at http://localhost:8096
@@ -98,7 +106,7 @@ Sonarr can also be configured in similar way.
 
 ## Configure Prowlarr
 
-- Open Prowlarr at http://localhost:9696
+- Open Prowlarr at http://localhost:9696 Default username is `admin` and password `adminadmin`
 - Settings --> General --> Authentications --> Select Authentication and add username and password
 - Add Indexers, Indexers --> Add Indexer --> Search for indexer --> Choose base URL --> Test and Save
 - Add application, Settings --> Apps --> Add application --> Choose Radarr --> Prowlarr server (http://prowlarr:9696) --> Radarr server (http://radarr:7878) --> API Key --> Test and Save
@@ -107,6 +115,8 @@ Sonarr can also be configured in similar way.
 
 **Note: If VPN is enabled, then Prowlarr will not be able to reach radarr and sonarr with localhost or container service name. In that case use static IP for sonarr and radarr in radarr/sonarr server field (for e.g. http://172.19.0.5:8989). Prowlar will also be not reachable with its container/service name. Use `http://vpn:9696` instead in prowlar server field.**
 
+
+#  Network Configuration
 ## Configure Nginx
 
 - Get inside Nginx container
