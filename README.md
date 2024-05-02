@@ -90,6 +90,14 @@ Sonarr can also be configured in similar way.
 - All queued movies download can be checked here, Activities --> Queue 
 - Go to qBittorrent (http://localhost:5080) and see if movie is getting downloaded (After movie is queued. This depends on availability of movie in indexers configured in Prowlarr.)
 
+##  Configure Sonnar
+
+-  Open Sonnar at http://localhost:8989 
+-  SET Default credentials of Sonnar
+-  Settings --> Media Management --> Check mark "Movies deleted from disk are automatically unmonitored in Radarr" under File management section --> Save
+-  Settings --> Download clients --> qBittorrent --> Add Host (qbittorrent) and port (5080) --> Username and password --> Test --> Save **Note: If VPN is enabled, then qbittorrent is reachable on vpn's service name. In this case use `vpn` in Host field.**
+-  Indexer will get automatically added during configuration of Prowlarr. See 'Configure Prowlarr' section.
+
 ## Configure Jellyfin
 
 - Open Jellyfin at http://localhost:8096
