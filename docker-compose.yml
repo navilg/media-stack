@@ -75,8 +75,8 @@ services:
       - TZ=UTC
       - WEBUI_PORT=5080
     volumes:
-      - qbittorrent-config:/config
-      - torrent-downloads:/downloads
+      - ${CONFIG}/qbittorrent:/config
+      - ${MEDIA}:/downloads
 
     ## Comment/Disable below ports if VPN is enabled
     ports:
@@ -100,8 +100,8 @@ services:
     ports:
       - 7878:7878
     volumes:
-      - radarr-config:/config
-      - torrent-downloads:/downloads
+      - ${CONFIG}/radarr:/config
+      - ${MEDIA}:/downloads
     restart: "unless-stopped"
 
   sonarr:
@@ -117,8 +117,8 @@ services:
       - PGID=1000
       - TZ=UTC
     volumes:
-      - sonarr-config:/config
-      - torrent-downloads:/downloads
+      - ${CONFIG}/sonarr:/config
+      - ${MEDIA}:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -139,7 +139,7 @@ services:
       - PGID=1000
       - TZ=UTC
     volumes:
-      - prowlarr-config:/config
+      - ${CONFIG}/prowlarr:/config
 
     # Comment below ports if VPN is enabled.
     ports:
@@ -156,8 +156,8 @@ services:
       - PGID=1000
       - TZ=UTC
     volumes:
-      - jellyfin-config:/config
-      - torrent-downloads:/data
+      - ${CONFIG}/jellyfin:/config
+      - ${MEDIA}:/data
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
@@ -195,15 +195,6 @@ services:
     # - CMA_RADARR_URL=${CMA_RADARR_URL:-""}
     # - CMA_RADARR_ENCODED_API_KEY=${CMA_RADARR_ENCODED_API_KEY:-""}
     # - CMA_RADARR_ENABLE_NOTIFICATION=${CMA_RADARR_ENABLE_NOTIFICATION:-""}
-
-volumes:
-  torrent-downloads:
-  radarr-config:
-  sonarr-config:
-  prowlarr-config:
-  jellyfin-config:
-  qbittorrent-config:
-  # cleanmyarr-config:
 
 networks:
   mynetwork:
