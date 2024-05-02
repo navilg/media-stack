@@ -87,7 +87,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.3.6
+    image: lscr.io/linuxserver/radarr:5.4.6
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -105,7 +105,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: linuxserver/sonarr:4.0.3
+    image: linuxserver/sonarr:4.0.4
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -125,7 +125,7 @@ services:
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.15.0
+    image: linuxserver/prowlarr:1.16.2
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
