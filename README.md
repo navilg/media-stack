@@ -4,7 +4,7 @@
 
 A stack of self-hosted media managers and streamer along with VPN. 
 
-Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent and Jellyfin.
+Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr and Jellyfin.
 
 ## Requirements
 
@@ -95,6 +95,12 @@ Sonarr can also be configured in similar way.
 - Open Jellyfin at http://localhost:8096
 - When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
+
+## Configure Jellyseerr
+
+- Open Jellyfin at http://localhost:5055
+- When you access the jellyseerr for first time using browser, A guided configuration will guide you to configure jellyseerr. Just follow the guide and provide the required details about sonarr and Radarr.
+- Follow the Overseerr document (Jellyseerr is fork of overseerr) for detailed setup - https://docs.overseerr.dev/ 
 
 ## Configure Prowlarr
 
@@ -230,6 +236,27 @@ location /qbt/ {
 
         # Disable buffering when the nginx proxy gets very resource heavy upon streaming
         proxy_buffering off;
+    }
+```
+
+## Jellyseerr Nginx proxy
+
+**Currently Jellyseerr/Overseerr doesnot officially support the subfolder/path reverse proxy. They have a workaround documented here without an official support. Find it [here](https://docs.overseerr.dev/extending-overseerr/reverse-proxy)**
+
+```
+location / {
+        proxy_pass http://127.0.0.1:5055;
+
+        proxy_set_header Referer $http_referer;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Real-Port $remote_port;
+        proxy_set_header X-Forwarded-Host $host:$remote_port;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-Port $remote_port;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Ssl on;
     }
 ```
 

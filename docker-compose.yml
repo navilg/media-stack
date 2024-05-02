@@ -146,6 +146,21 @@ services:
       - 9696:9696
     restart: unless-stopped
 
+  jellyseerr:
+    image: fallenbagel/jellyseerr:1.8.1
+    container_name: jellyseerr
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - jellyseerr-config:/app/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
   jellyfin:
     image: linuxserver/jellyfin:10.8.13
     container_name: jellyfin
@@ -203,6 +218,7 @@ volumes:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
+  jellyseerr-config:
   # cleanmyarr-config:
 
 networks:
