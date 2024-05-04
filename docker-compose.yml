@@ -86,8 +86,8 @@ services:
     restart: "unless-stopped"
 
   radarr:
-    container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.3.6
+    container_name: sonarr
+    image: lscr.io/linuxserver/radarr:latest
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -105,7 +105,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: linuxserver/sonarr:4.0.3
+    image: linuxserver/sonarr:latest
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -145,9 +145,24 @@ services:
     ports:
       - 9696:9696
     restart: unless-stopped
-
+  jackett:
+    container_name: jackett
+    image: linuxserver/jackett:0.21.2530
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - ${CONFIG}/jackett:/config
+      - ${MEDIA}:/downloads
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+    
   jellyfin:
-    image: linuxserver/jellyfin:10.8.13
+    image: linuxserver/jellyfin:latest
     container_name: jellyfin
     networks:
       - mynetwork
