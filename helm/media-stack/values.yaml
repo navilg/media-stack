@@ -1,0 +1,183 @@
+# Default values for media-stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+storageClassName: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+common:
+  volumeMounts:
+    - name: torrent-downloads
+      mountPath: "/downloads"
+      size: 10G
+      accessMode: ReadWriteMany
+
+qbittorrent:
+  image:
+    repository: lscr.io/linuxserver/qbittorrent
+    tag: "4.6.4"
+    pullPolicy: IfNotPresent
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  ports:
+    ui: 8080
+    peerConnectionPort: 6881
+
+  additionalEnvirionmentVars:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: TZ
+      value: "UTC"
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http-qbt
+    initialDelaySeconds: 5
+    timeoutSeconds: 5
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http-qbt
+    initialDelaySeconds: 5
+    timeoutSeconds: 5
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts:
+    - name: qbittorrent-config
+      mountPath: "/config"
+      size: 50M
+      accessMode: ReadWriteOnce
+
+radarr:
+  image:
+    repository: lscr.io/linuxserver/radarr
+    tag: "5.5.3"
+    pullPolicy: IfNotPresent
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  ports:
+    ui: 7878
+
+  additionalEnvirionmentVars:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: TZ
+      value: "UTC"
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http-radarr
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http-radarr
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts:
+    - name: radarr-config
+      mountPath: "/config"
+      size: 150M
+      accessMode: ReadWriteOnce
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: qbittorrent.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          servicePort: 8080
+    - host: radarr.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          servicePort: 7878
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local

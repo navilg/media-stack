@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "media-stack.fullname" . }}
+  labels:
+    {{- include "media-stack.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    # qBittorrent
+    - port: {{ .Values.qbittorrent.ports.ui }}
+      targetPort: http-qbt
+      protocol: TCP
+      name: http-qbt
+
+    # radarr
+    - port: {{ .Values.radarr.ports.ui }}
+      targetPort: http-radarr
+      protocol: TCP
+      name: http-radarr
+  selector:
+    {{- include "media-stack.selectorLabels" . | nindent 4 }}

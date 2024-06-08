@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "media-stack.fullname" . }}
+  labels:
+    {{- include "media-stack.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "media-stack.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "media-stack.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "media-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        # qBittorrent
+        - name: {{ .Chart.Name }}-qbt
+          securityContext:
+            {{- toYaml .Values.qbittorrent.securityContext | nindent 12 }}
+          image: "{{ .Values.qbittorrent.image.repository }}:{{ .Values.qbittorrent.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.qbittorrent.image.pullPolicy }}
+          ports:
+            - name: http-qbt
+              containerPort: {{ .Values.qbittorrent.ports.ui }}
+              protocol: TCP
+            - name: tcppeer
+              containerPort: {{ .Values.qbittorrent.ports.peerConnectionPort }}
+              protocol: TCP
+            - name: udppeer
+              containerPort: {{ .Values.qbittorrent.ports.peerConnectionPort }}
+              protocol: UDP
+          env:
+            - name: WEB_UI
+              value: "{{ .Values.qbittorrent.ports.ui }}"
+            {{- with .Values.qbittorrent.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.qbittorrent.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.qbittorrent.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.qbittorrent.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.common.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+            {{- range .Values.qbittorrent.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
+        # radarr
+        - name: {{ .Chart.Name }}-radarr
+          securityContext:
+            {{- toYaml .Values.radarr.securityContext | nindent 12 }}
+          image: "{{ .Values.radarr.image.repository }}:{{ .Values.radarr.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.radarr.image.pullPolicy }}
+          ports:
+            - name: http-radarr
+              containerPort: {{ .Values.radarr.ports.ui }}
+              protocol: TCP
+          env:
+            {{- with .Values.radarr.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.radarr.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.radarr.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.radarr.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.common.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+            {{- range .Values.radarr.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
+      volumes:
+        {{- range .Values.common.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.qbittorrent.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.radarr.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
