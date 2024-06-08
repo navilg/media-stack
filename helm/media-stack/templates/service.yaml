@@ -18,5 +18,11 @@ spec:
       targetPort: http-radarr
       protocol: TCP
       name: http-radarr
+
+    # sonarr
+    - port: {{ .Values.sonarr.ports.ui }}
+      targetPort: http-sonarr
+      protocol: TCP
+      name: http-sonarr
   selector:
     {{- include "media-stack.selectorLabels" . | nindent 4 }}

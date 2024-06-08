@@ -84,18 +84,18 @@ qbittorrent:
     #   cpu: 100m
     #   memory: 128Mi
 
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http-qbt
-    initialDelaySeconds: 5
-    timeoutSeconds: 5
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http-qbt
-    initialDelaySeconds: 5
-    timeoutSeconds: 5
+  # livenessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-qbt
+  #   initialDelaySeconds: 90
+  #   timeoutSeconds: 5
+  # readinessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-qbt
+  #   initialDelaySeconds: 90
+  #   timeoutSeconds: 5
 
   # Additional volumeMounts on the output Deployment definition.
   volumeMounts:
@@ -141,18 +141,79 @@ radarr:
     #   cpu: 100m
     #   memory: 128Mi
 
-  livenessProbe:
-    httpGet:
-      path: /
-      port: http-radarr
-  readinessProbe:
-    httpGet:
-      path: /
-      port: http-radarr
+  # livenessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-radarr
+  #   initialDelaySeconds: 30
+  #   timeoutSeconds: 5
+  # readinessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-radarr
+  #   initialDelaySeconds: 30
+  #   timeoutSeconds: 5
 
   # Additional volumeMounts on the output Deployment definition.
   volumeMounts:
     - name: radarr-config
+      mountPath: "/config"
+      size: 150M
+      accessMode: ReadWriteOnce
+
+sonarr:
+  image:
+    repository: lscr.io/linuxserver/sonarr
+    tag: "4.0.4"
+    pullPolicy: IfNotPresent
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  ports:
+    ui: 8989
+
+  additionalEnvirionmentVars:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: TZ
+      value: "UTC"
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  # livenessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-sonarr
+  #   initialDelaySeconds: 30
+  #   timeoutSeconds: 5
+  # readinessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: http-sonarr
+  #   initialDelaySeconds: 30
+  #   timeoutSeconds: 5
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts:
+    - name: sonarr-config
       mountPath: "/config"
       size: 150M
       accessMode: ReadWriteOnce
@@ -177,6 +238,12 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
           servicePort: 7878
+    - host: sonarr.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          servicePort: 8989
+    
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

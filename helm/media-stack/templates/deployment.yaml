@@ -30,7 +30,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         # qBittorrent
-        - name: {{ .Chart.Name }}-qbt
+        - name: qbittorrent
           securityContext:
             {{- toYaml .Values.qbittorrent.securityContext | nindent 12 }}
           image: "{{ .Values.qbittorrent.image.repository }}:{{ .Values.qbittorrent.image.tag | default "latest" }}"
@@ -51,10 +51,6 @@ spec:
             {{- with .Values.qbittorrent.additionalEnvirionmentVars }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          livenessProbe:
-            {{- toYaml .Values.qbittorrent.livenessProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.qbittorrent.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.qbittorrent.resources | nindent 12 }}
           volumeMounts:
@@ -68,7 +64,7 @@ spec:
             {{- end }}
 
         # radarr
-        - name: {{ .Chart.Name }}-radarr
+        - name: radarr
           securityContext:
             {{- toYaml .Values.radarr.securityContext | nindent 12 }}
           image: "{{ .Values.radarr.image.repository }}:{{ .Values.radarr.image.tag | default "latest" }}"
@@ -81,10 +77,6 @@ spec:
             {{- with .Values.radarr.additionalEnvirionmentVars }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          livenessProbe:
-            {{- toYaml .Values.radarr.livenessProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.radarr.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.radarr.resources | nindent 12 }}
           volumeMounts:
@@ -93,6 +85,32 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
             {{- range .Values.radarr.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
+        # sonarr
+        - name: sonarr
+          securityContext:
+            {{- toYaml .Values.sonarr.securityContext | nindent 12 }}
+          image: "{{ .Values.sonarr.image.repository }}:{{ .Values.sonarr.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.sonarr.image.pullPolicy }}
+          ports:
+            - name: http-sonarr
+              containerPort: {{ .Values.sonarr.ports.ui }}
+              protocol: TCP
+          env:
+            {{- with .Values.sonarr.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.sonarr.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.common.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+            {{- range .Values.sonarr.volumeMounts }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
@@ -109,6 +127,11 @@ spec:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
         {{- end }}
         {{- range .Values.radarr.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.sonarr.volumeMounts }}
         - name: {{ .name }}
           persistentVolumeClaim:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}

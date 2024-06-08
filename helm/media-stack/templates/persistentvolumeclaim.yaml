@@ -35,7 +35,27 @@ spec:
     requests:
       storage: {{ .size }}
 {{- end }}
+
 {{- range .Values.radarr.volumeMounts }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "media-stack.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "media-stack.labels" $ | nindent 4 }}
+spec:
+  {{- if $.Values.storageClassName }}
+  storageClassName: {{ $.Values.storageClassName }}
+  {{- end }}
+  accessModes:
+    - {{ .accessMode }}
+  resources:
+    requests:
+      storage: {{ .size }}
+{{- end }}
+
+{{- range .Values.sonarr.volumeMounts }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
