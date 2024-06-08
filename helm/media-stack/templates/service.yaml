@@ -24,5 +24,11 @@ spec:
       targetPort: http-sonarr
       protocol: TCP
       name: http-sonarr
+
+    # prowlarr
+    - port: {{ .Values.prowlarr.ports.ui }}
+      targetPort: http-prowlarr
+      protocol: TCP
+      name: http-prowlarr
   selector:
     {{- include "media-stack.selectorLabels" . | nindent 4 }}

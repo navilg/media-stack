@@ -115,6 +115,28 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
 
+        # prowlarr
+        - name: prowlarr
+          securityContext:
+            {{- toYaml .Values.prowlarr.securityContext | nindent 12 }}
+          image: "{{ .Values.prowlarr.image.repository }}:{{ .Values.prowlarr.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.prowlarr.image.pullPolicy }}
+          ports:
+            - name: http-prowlarr
+              containerPort: {{ .Values.prowlarr.ports.ui }}
+              protocol: TCP
+          env:
+            {{- with .Values.prowlarr.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.prowlarr.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.prowlarr.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
       volumes:
         {{- range .Values.common.volumeMounts }}
         - name: {{ .name }}
@@ -132,6 +154,11 @@ spec:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
         {{- end }}
         {{- range .Values.sonarr.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.prowlarr.volumeMounts }}
         - name: {{ .name }}
           persistentVolumeClaim:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
