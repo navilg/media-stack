@@ -137,6 +137,28 @@ spec:
               mountPath: {{ .mountPath }}
             {{- end }}
 
+        # Jellyseerr
+        - name: jellyseerr
+          securityContext:
+            {{- toYaml .Values.jellyseerr.securityContext | nindent 12 }}
+          image: "{{ .Values.jellyseerr.image.repository }}:{{ .Values.jellyseerr.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.jellyseerr.image.pullPolicy }}
+          ports:
+            - name: http-jellyseerr
+              containerPort: {{ .Values.jellyseerr.ports.ui }}
+              protocol: TCP
+          env:
+            {{- with .Values.jellyseerr.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.jellyseerr.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.jellyseerr.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
       volumes:
         {{- range .Values.common.volumeMounts }}
         - name: {{ .name }}
@@ -163,6 +185,12 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
         {{- end }}
+        {{- range .Values.jellyseerr.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

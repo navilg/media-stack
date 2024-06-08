@@ -30,5 +30,11 @@ spec:
       targetPort: http-prowlarr
       protocol: TCP
       name: http-prowlarr
+
+    # jellyseerr
+    - port: {{ .Values.jellyseerr.ports.ui }}
+      targetPort: http-jellyseerr
+      protocol: TCP
+      name: http-jellyseerr
   selector:
     {{- include "media-stack.selectorLabels" . | nindent 4 }}
