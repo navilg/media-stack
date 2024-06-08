@@ -1,22 +1,21 @@
 
-{{- range .Values.common.volumeMounts }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "media-stack.fullname" $ }}-{{ .name }}
+  name: {{ include "media-stack.fullname" $ }}-{{ .Values.common.torrentVolume.name }}
   labels:
     {{- include "media-stack.labels" $ | nindent 4 }}
 spec:
-  {{- if $.Values.storageClassName }}
-  storageClassName: {{ $.Values.storageClassName }}
+  {{- if .Values.storageClassName }}
+  storageClassName: {{ .Values.storageClassName }}
   {{- end }}
   accessModes:
-    - {{ .accessMode }}
+    - {{ .Values.common.torrentVolume.accessMode }}
   resources:
     requests:
-      storage: {{ .size }}
-{{- end }}
+      storage: {{ .Values.common.torrentVolume.size }}
+
 {{- range .Values.qbittorrent.volumeMounts }}
 ---
 apiVersion: v1
@@ -94,6 +93,25 @@ spec:
 {{- end }}
 
 {{- range .Values.jellyseerr.volumeMounts }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "media-stack.fullname" $ }}-{{ .name }}
+  labels:
+    {{- include "media-stack.labels" $ | nindent 4 }}
+spec:
+  {{- if $.Values.storageClassName }}
+  storageClassName: {{ $.Values.storageClassName }}
+  {{- end }}
+  accessModes:
+    - {{ .accessMode }}
+  resources:
+    requests:
+      storage: {{ .size }}
+{{- end }}
+
+{{- range .Values.jellyfin.volumeMounts }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

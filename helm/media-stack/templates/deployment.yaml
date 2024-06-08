@@ -54,10 +54,8 @@ spec:
           resources:
             {{- toYaml .Values.qbittorrent.resources | nindent 12 }}
           volumeMounts:
-            {{- range .Values.common.volumeMounts }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
+            - name: {{ .Values.common.torrentVolume.name }}
+              mountPath: "/downloads"
             {{- range .Values.qbittorrent.volumeMounts }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
@@ -80,10 +78,8 @@ spec:
           resources:
             {{- toYaml .Values.radarr.resources | nindent 12 }}
           volumeMounts:
-            {{- range .Values.common.volumeMounts }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
+            - name: {{ .Values.common.torrentVolume.name }}
+              mountPath: "/downloads"
             {{- range .Values.radarr.volumeMounts }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
@@ -106,10 +102,8 @@ spec:
           resources:
             {{- toYaml .Values.sonarr.resources | nindent 12 }}
           volumeMounts:
-            {{- range .Values.common.volumeMounts }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-            {{- end }}
+            - name: {{ .Values.common.torrentVolume.name }}
+              mountPath: "/downloads"
             {{- range .Values.sonarr.volumeMounts }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
@@ -158,13 +152,41 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
+        
+        # Jellyfin
+        - name: jellyfin
+          securityContext:
+            {{- toYaml .Values.jellyfin.securityContext | nindent 12 }}
+          image: "{{ .Values.jellyfin.image.repository }}:{{ .Values.jellyfin.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.jellyfin.image.pullPolicy }}
+          ports:
+            - name: http-jellyfin
+              containerPort: {{ .Values.jellyfin.ports.ui }}
+              protocol: TCP
+            - name: dnla
+              containerPort: {{ .Values.jellyfin.ports.dnla }}
+              protocol: UDP
+            - name: localnetwork
+              containerPort: {{ .Values.jellyfin.ports.localnetwork }}
+              protocol: UDP
+          env:
+            {{- with .Values.jellyfin.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.jellyfin.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Values.common.torrentVolume.name }}
+              mountPath: "/data"
+            {{- range .Values.jellyfin.volumeMounts }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
 
       volumes:
-        {{- range .Values.common.volumeMounts }}
-        - name: {{ .name }}
+        - name: {{ .Values.common.torrentVolume.name }}
           persistentVolumeClaim:
-            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
-        {{- end }}
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .Values.common.torrentVolume.name }}
         {{- range .Values.qbittorrent.volumeMounts }}
         - name: {{ .name }}
           persistentVolumeClaim:
@@ -186,6 +208,11 @@ spec:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
         {{- end }}
         {{- range .Values.jellyseerr.volumeMounts }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.jellyfin.volumeMounts }}
         - name: {{ .name }}
           persistentVolumeClaim:
             claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}

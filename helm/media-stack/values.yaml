@@ -40,11 +40,10 @@ tolerations: []
 affinity: {}
 
 common:
-  volumeMounts:
-    - name: torrent-downloads
-      mountPath: "/downloads"
-      size: 10G
-      accessMode: ReadWriteMany
+  torrentVolume:
+    name: torrent-downloads
+    size: 10G
+    accessMode: ReadWriteMany
 
 qbittorrent:
   image:
@@ -280,6 +279,52 @@ jellyseerr:
       size: 50M
       accessMode: ReadWriteOnce
 
+jellyfin:
+  image:
+    repository: lscr.io/linuxserver/jellyfin
+    tag: "10.9.2"
+    pullPolicy: IfNotPresent
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  ports:
+    ui: 8096
+    localnetwork: 7359
+    dnla: 1900
+
+  additionalEnvirionmentVars:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: TZ
+      value: "UTC"
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts:
+    - name: jellyfin-config
+      mountPath: "/config"
+      size: 5G
+      accessMode: ReadWriteOnce
+
 service:
   type: ClusterIP
 
@@ -315,6 +360,11 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
           servicePort: 5055
+    - host: jellyfin.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+          servicePort: 8096
     
   tls: []
   #  - secretName: chart-example-tls

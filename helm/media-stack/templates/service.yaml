@@ -36,5 +36,11 @@ spec:
       targetPort: http-jellyseerr
       protocol: TCP
       name: http-jellyseerr
+
+    # jellyfin
+    - port: {{ .Values.jellyfin.ports.ui }}
+      targetPort: http-jellyfin
+      protocol: TCP
+      name: http-jellyfin
   selector:
     {{- include "media-stack.selectorLabels" . | nindent 4 }}
