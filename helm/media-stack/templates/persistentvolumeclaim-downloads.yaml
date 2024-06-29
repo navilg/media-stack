@@ -13,7 +13,7 @@ spec:
   {{- if .multiPodDeployment }}
   accessModes:
     - ReadWriteMany
-  {{- else -}}
+  {{- else }}
   accessModes:
     - ReadWriteOnce
   {{- end }}
