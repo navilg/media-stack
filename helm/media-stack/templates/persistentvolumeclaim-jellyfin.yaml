@@ -1,4 +1,4 @@
-{{- range .Values.jellyfin.volumeMounts }}
+{{- range .Values.jellyfin.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

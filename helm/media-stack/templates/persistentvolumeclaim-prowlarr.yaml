@@ -1,4 +1,4 @@
-{{- range .Values.prowlarr.volumeMounts }}
+{{- range .Values.prowlarr.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

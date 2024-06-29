@@ -1,4 +1,4 @@
-{{- range .Values.jellyseerr.volumeMounts }}
+{{- range .Values.jellyseerr.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -1,5 +1,5 @@
 
-{{- range .Values.qbittorrent.volumeMounts }}
+{{- range .Values.qbittorrent.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

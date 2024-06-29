@@ -1,4 +1,4 @@
-{{- range .Values.sonarr.volumeMounts }}
+{{- range .Values.sonarr.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

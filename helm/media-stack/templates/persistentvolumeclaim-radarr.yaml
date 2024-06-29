@@ -1,5 +1,5 @@
 
-{{- range .Values.radarr.volumeMounts }}
+{{- range .Values.radarr.volumes }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
