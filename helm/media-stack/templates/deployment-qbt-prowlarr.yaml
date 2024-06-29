@@ -1,0 +1,117 @@
+{{- if .multiPodDeployment -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "media-stack.fullname" . }}-qbt-prowlarr
+  labels:
+    {{- include "media-stack.labels" . | nindent 4 }}
+    app: qbt-prowlarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "media-stack.selectorLabels" . | nindent 6 }}
+      app: qbt-prowlarr
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "media-stack.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app: qbt-prowlarr
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "media-stack.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        # qBittorrent
+        - name: qbittorrent
+          securityContext:
+            {{- toYaml .Values.qbittorrent.securityContext | nindent 12 }}
+          image: "{{ .Values.qbittorrent.image.repository }}:{{ .Values.qbittorrent.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.qbittorrent.image.pullPolicy }}
+          ports:
+            - name: http-qbt
+              containerPort: {{ .Values.qbittorrent.ports.ui }}
+              protocol: TCP
+            - name: tcppeer
+              containerPort: {{ .Values.qbittorrent.ports.peerConnectionPort }}
+              protocol: TCP
+            - name: udppeer
+              containerPort: {{ .Values.qbittorrent.ports.peerConnectionPort }}
+              protocol: UDP
+          env:
+            - name: WEB_UI
+              value: "{{ .Values.qbittorrent.ports.ui }}"
+            {{- with .Values.qbittorrent.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.qbittorrent.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Values.common.torrentVolume.name }}
+              mountPath: "/downloads"
+            {{- range .Values.qbittorrent.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
+        # prowlarr
+        - name: prowlarr
+          securityContext:
+            {{- toYaml .Values.prowlarr.securityContext | nindent 12 }}
+          image: "{{ .Values.prowlarr.image.repository }}:{{ .Values.prowlarr.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.prowlarr.image.pullPolicy }}
+          ports:
+            - name: http-prowlarr
+              containerPort: {{ .Values.prowlarr.ports.ui }}
+              protocol: TCP
+          env:
+            {{- with .Values.prowlarr.additionalEnvirionmentVars }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.prowlarr.resources | nindent 12 }}
+          volumeMounts:
+            {{- range .Values.prowlarr.volumes }}
+            - name: {{ .name }}
+              mountPath: {{ .mountPath }}
+            {{- end }}
+
+      volumes:
+        - name: {{ .Values.common.torrentVolume.name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .Values.common.torrentVolume.name }}
+        {{- range .Values.qbittorrent.volumes }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+        {{- range .Values.prowlarr.volumes }}
+        - name: {{ .name }}
+          persistentVolumeClaim:
+            claimName: {{ include "media-stack.fullname" $ }}-{{ .name }}
+        {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
