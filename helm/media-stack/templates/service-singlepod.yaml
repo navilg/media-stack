@@ -1,3 +1,4 @@
+{{- if not .multiPodDeployment -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -44,3 +45,4 @@ spec:
       name: http-jellyfin
   selector:
     {{- include "media-stack.selectorLabels" . | nindent 4 }}
+{{- end }}

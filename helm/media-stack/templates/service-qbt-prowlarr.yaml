@@ -1,0 +1,26 @@
+{{- if .multiPodDeployment -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "media-stack.fullname" . }}-qbt-prowlarr
+  labels:
+    {{- include "media-stack.labels" . | nindent 4 }}
+    app: qbt-prowlarr
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    # qBittorrent
+    - port: {{ .Values.qbittorrent.ports.ui }}
+      targetPort: http-qbt
+      protocol: TCP
+      name: http-qbt
+
+    # prowlarr
+    - port: {{ .Values.prowlarr.ports.ui }}
+      targetPort: http-prowlarr
+      protocol: TCP
+      name: http-prowlarr
+  selector:
+    {{- include "media-stack.selectorLabels" . | nindent 4 }}
+    app: qbt-prowlarr
+{{- end }}
