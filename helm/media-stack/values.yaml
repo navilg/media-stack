@@ -2,6 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Specify if media stack is deployed as a single pod with all application containers
+# or as individual pods for each application container
+# Make it true only if storage provider supports ReadWriteMany accesss mode for PVs.
+multiPodDeployment: false # true
+
 podAnnotations: {}
 podLabels: {}
 
@@ -43,7 +48,6 @@ common:
   torrentVolume:
     name: torrent-downloads
     size: 10G
-    accessMode: ReadWriteMany
 
 qbittorrent:
   image:
@@ -97,7 +101,7 @@ qbittorrent:
   #   timeoutSeconds: 5
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: qbittorrent-config
       mountPath: "/config"
       size: 50M
@@ -141,7 +145,7 @@ radarr:
     #   memory: 128Mi
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: radarr-config
       mountPath: "/config"
       size: 150M
@@ -185,7 +189,7 @@ sonarr:
     #   memory: 128Mi
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: sonarr-config
       mountPath: "/config"
       size: 150M
@@ -229,7 +233,7 @@ prowlarr:
     #   memory: 128Mi
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: prowlarr-config
       mountPath: "/config"
       size: 100M
@@ -273,7 +277,7 @@ jellyseerr:
     #   memory: 128Mi
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: jellyseerr-config
       mountPath: "/app/config"
       size: 50M
@@ -319,7 +323,7 @@ jellyfin:
     #   memory: 128Mi
 
   # Additional volumeMounts on the output Deployment definition.
-  volumeMounts:
+  volumes:
     - name: jellyfin-config
       mountPath: "/config"
       size: 5G

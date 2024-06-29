@@ -10,8 +10,13 @@ spec:
   {{- if .Values.storageClassName }}
   storageClassName: {{ .Values.storageClassName }}
   {{- end }}
+  {{- if .multiPodDeployment }}
   accessModes:
-    - {{ .Values.common.torrentVolume.accessMode }}
+    - ReadWriteMany
+  {{- else -}}
+  accessModes:
+    - ReadWriteOnce
+  {{- end }}
   resources:
     requests:
       storage: {{ .Values.common.torrentVolume.size }}
