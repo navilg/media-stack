@@ -1,0 +1,17 @@
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "media-stack.fullname" $ }}-{{ .Values.common.torrentVolume.name }}
+  labels:
+    {{- include "media-stack.labels" $ | nindent 4 }}
+spec:
+  {{- if .Values.storageClassName }}
+  storageClassName: {{ .Values.storageClassName }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.common.torrentVolume.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.common.torrentVolume.size }}
