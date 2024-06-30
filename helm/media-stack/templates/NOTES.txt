@@ -51,6 +51,6 @@
 {{- if not .Values.multiPodDeployment }}
 kubectl --namespace {{ .Release.Namespace }} logs deploy/media-stack -c qbittorrent
 {{- else }}
-kubectl --namespace {{ .Release.Namespace }} logs -l app=qbittorrent -c qbittorrent
+kubectl --namespace {{ .Release.Namespace }} logs -l app=qbt-prowlarr -c qbittorrent
 {{- end }}
 

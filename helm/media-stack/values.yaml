@@ -172,6 +172,7 @@ radarr:
 
   ingress:
     annotations: {}
+    # Add ingress annotations for qbittorrent and prowlarr here, if needed
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
     host: radarr.local
@@ -284,9 +285,6 @@ prowlarr:
       accessMode: ReadWriteOnce
 
   ingress:
-    annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
     host: prowlarr.local
     paths:
       - path: /
