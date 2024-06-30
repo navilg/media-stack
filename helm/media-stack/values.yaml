@@ -44,6 +44,13 @@ tolerations: []
 
 affinity: {}
 
+ingress:
+  enabled: true
+  className: ""
+  singlePodIngressAnnotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+
 common:
   torrentVolume:
     name: torrent-downloads
@@ -107,6 +114,18 @@ qbittorrent:
       size: 50M
       accessMode: ReadWriteOnce
 
+  ingress:
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    host: qbittorrent.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 8080
+    tls: {}
+      # secretName: qbittorrent-tls
+
 radarr:
   image:
     repository: lscr.io/linuxserver/radarr
@@ -150,6 +169,18 @@ radarr:
       mountPath: "/config"
       size: 150M
       accessMode: ReadWriteOnce
+
+  ingress:
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    host: radarr.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 7878
+    tls: {}
+      # secretName: radarr-tls
 
 sonarr:
   image:
@@ -195,6 +226,19 @@ sonarr:
       size: 150M
       accessMode: ReadWriteOnce
 
+
+  ingress:
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    host: sonarr.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 8989
+    tls: {}
+      # secretName: sonarr-tls
+
 prowlarr:
   image:
     repository: lscr.io/linuxserver/prowlarr
@@ -239,6 +283,18 @@ prowlarr:
       size: 100M
       accessMode: ReadWriteOnce
 
+  ingress:
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    host: prowlarr.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 9696
+    tls: {}
+      # secretName: prowlarr-tls
+
 jellyseerr:
   image:
     repository: fallenbagel/jellyseerr
@@ -282,6 +338,18 @@ jellyseerr:
       mountPath: "/app/config"
       size: 50M
       accessMode: ReadWriteOnce
+
+  ingress:
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    host: jellyseerr.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 5055
+    tls: {}
+      # secretName: jellyseerr-tls
 
 jellyfin:
   image:
@@ -329,48 +397,17 @@ jellyfin:
       size: 5G
       accessMode: ReadWriteOnce
 
-service:
-  type: ClusterIP
-
-ingress:
-  enabled: true
-  className: ""
-  annotations: {}
+  ingress:
+    annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: qbittorrent.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 8080
-    - host: radarr.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 7878
-    - host: sonarr.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 8989
-    - host: prowlarr.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 9696
-    - host: jellyseerr.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 5055
-    - host: jellyfin.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          servicePort: 8096
-    
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    host: jellyfin.local
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        servicePort: 8096
+    tls: {}
+      # secretName: jellyfin-tls
+
+service:
+  type: ClusterIP
