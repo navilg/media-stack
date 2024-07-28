@@ -14,20 +14,17 @@ Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr and Jellyfi
 
 ## Install media stack
 
-> **WARNING:** Breaking changes in Jellyfin version 10.9.x. If you are upgrading from Jellyfin 10.8.x to 10.9.x, You will need to restart Jellyfin again after Jellyfin container comes up. You may also look into and re-configure your plugins, especially if you are using Jellyscrub plugin because it now directly comes with official Jellyfin build. Backup your Jellyfin before upgrading.
-> Details here: 
->
-> https://github.com/jellyfin/jellyfin/releases/tag/v10.9.0
->
-> https://github.com/jellyfin/jellyfin/releases/tag/v10.9.1
->
-> https://github.com/jellyfin/jellyfin/releases/tag/v10.9.2
->
-
 There are two ways this stack can be deployed.
 
 1. With a VPN (Recommended)
 2. Without a VPN
+
+> **NOTE:** If you are installing this stack without VPN, You must use `no-vpn` profile. This has been made mandatory to avoid accidental/unknowingly deployment of media-stack without VPN.
+> Running `docker compose` command without a profile will not deploy anything.
+>
+> Check installation steps below.
+>
+
 
 Before we deploy the stack, We must create docker network first
 
@@ -66,7 +63,7 @@ VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=open
 To deploy the stack without VPN (highly discouraged), Run below command.
 
 ```bash
-docker compose up -d
+docker compose --profile no-vpn up -d
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 

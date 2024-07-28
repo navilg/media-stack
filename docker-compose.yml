@@ -55,6 +55,7 @@ services:
   ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
+    profiles: ["vpn", "no-vpn"]
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:4.6.5
 
@@ -86,6 +87,7 @@ services:
     restart: "unless-stopped"
 
   radarr:
+    profiles: ["vpn", "no-vpn"]
     container_name: radarr
     image: lscr.io/linuxserver/radarr:5.7.0
     networks:
@@ -105,6 +107,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
+    profiles: ["vpn", "no-vpn"]
     image: linuxserver/sonarr:4.0.8
     container_name: sonarr
     networks:
@@ -124,6 +127,7 @@ services:
     restart: unless-stopped
 
   prowlarr:
+    profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
     image: linuxserver/prowlarr:1.20.1
 
@@ -147,6 +151,7 @@ services:
     restart: unless-stopped
 
   jellyseerr:
+    profiles: ["vpn", "no-vpn"]
     image: fallenbagel/jellyseerr:1.9.2
     container_name: jellyseerr
     networks:
@@ -162,6 +167,7 @@ services:
     restart: unless-stopped
 
   jellyfin:
+    profiles: ["vpn", "no-vpn"]
     image: linuxserver/jellyfin:10.9.8
     container_name: jellyfin
     networks:
@@ -183,6 +189,7 @@ services:
   
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
+  #   profiles: ["vpn", "no-vpn"]
   #   depends_on:
   #     - radarr
   #     - sonarr
