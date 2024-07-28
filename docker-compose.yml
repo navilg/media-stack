@@ -56,7 +56,7 @@ services:
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.6.4
+    image: lscr.io/linuxserver/qbittorrent:4.6.5
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -87,7 +87,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.5.3
+    image: lscr.io/linuxserver/radarr:5.7.0
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -105,7 +105,7 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: linuxserver/sonarr:4.0.4
+    image: linuxserver/sonarr:4.0.8
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -125,7 +125,7 @@ services:
 
   prowlarr:
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.17.2
+    image: linuxserver/prowlarr:1.20.1
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -147,7 +147,7 @@ services:
     restart: unless-stopped
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:1.8.1
+    image: fallenbagel/jellyseerr:1.9.2
     container_name: jellyseerr
     networks:
       - mynetwork
@@ -162,7 +162,7 @@ services:
     restart: unless-stopped
 
   jellyfin:
-    image: linuxserver/jellyfin:10.9.2
+    image: linuxserver/jellyfin:10.9.8
     container_name: jellyfin
     networks:
       - mynetwork
