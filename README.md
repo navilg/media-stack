@@ -4,7 +4,7 @@
 
 A stack of self-hosted media managers and streamer along with VPN. 
 
-Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent and Jellyfin.
+Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr and Jellyfin.
 
 ## Requirements
 
@@ -18,6 +18,13 @@ There are two ways this stack can be deployed.
 
 1. With a VPN (Recommended)
 2. Without a VPN
+
+> **NOTE:** If you are installing this stack without VPN, You must use `no-vpn` profile. This has been made mandatory to avoid accidental/unknowingly deployment of media-stack without VPN.
+> Running `docker compose` command without a profile will not deploy anything.
+>
+> Check installation steps below.
+>
+
 
 Before we deploy the stack, We must create docker network first
 
@@ -33,6 +40,7 @@ If VPN is enabled, qBittorrent and Prowlarr will be put behind VPN.
 By default, NordVPN is used in `docker-compose.yml` file. This can be updated to use ExpressVPN, SurfShark, ProtonVPN, Custom OpenVPN or Wireguard VPN. It uses OpenVPN type for all the providers. 
 
 Check respective document of your VPN provider to generate OpenVPN username and password.
+Follow https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers to configure gluetun for your VPN provider.
 
 By default, VPN is disabled in `docker-compose.yml`. We just need to comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
 
@@ -55,7 +63,7 @@ VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=open
 To deploy the stack without VPN (highly discouraged), Run below command.
 
 ```bash
-docker compose up -d
+docker compose --profile no-vpn up -d
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 
@@ -94,6 +102,12 @@ Sonarr can also be configured in similar way.
 - Open Jellyfin at http://localhost:8096
 - When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
+
+## Configure Jellyseerr
+
+- Open Jellyfin at http://localhost:5055
+- When you access the jellyseerr for first time using browser, A guided configuration will guide you to configure jellyseerr. Just follow the guide and provide the required details about sonarr and Radarr.
+- Follow the Overseerr document (Jellyseerr is fork of overseerr) for detailed setup - https://docs.overseerr.dev/ 
 
 ## Configure Prowlarr
 
@@ -229,6 +243,27 @@ location /qbt/ {
 
         # Disable buffering when the nginx proxy gets very resource heavy upon streaming
         proxy_buffering off;
+    }
+```
+
+## Jellyseerr Nginx proxy
+
+**Currently Jellyseerr/Overseerr doesnot officially support the subfolder/path reverse proxy. They have a workaround documented here without an official support. Find it [here](https://docs.overseerr.dev/extending-overseerr/reverse-proxy)**
+
+```
+location / {
+        proxy_pass http://127.0.0.1:5055;
+
+        proxy_set_header Referer $http_referer;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Real-Port $remote_port;
+        proxy_set_header X-Forwarded-Host $host:$remote_port;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-Port $remote_port;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Ssl on;
     }
 ```
 

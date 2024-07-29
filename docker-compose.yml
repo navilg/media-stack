@@ -6,10 +6,10 @@ services:
 
   # To use/enable VPN, Run this compose file with --profile=vpn. Its highly recommended to use VPN.
   vpn:
-  ## Read https://github.com/qdm12/gluetun/wiki for details on configuring VPN for different service providers.
+    ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.36.0
+    image: qmcgaw/gluetun:v3.38.0
     cap_add:
       - NET_ADMIN
     environment:
@@ -64,8 +64,9 @@ services:
   ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
+    profiles: ["vpn", "no-vpn"]
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.5.5
+    image: lscr.io/linuxserver/qbittorrent:4.6.5
 
     # Unomment below if vpn is enabled
     depends_on:               # Uncomment this line if vpn is enabled
@@ -95,8 +96,9 @@ services:
     restart: "unless-stopped"
 
   radarr:
+    profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.0.3
+    image: lscr.io/linuxserver/radarr:5.7.0
     networks:
       # - mynetwork   # Comment this line if VPN is enabled
     # Uncomment below lines if VPN is enabled
@@ -114,7 +116,8 @@ services:
     restart: "unless-stopped"
 
   sonarr:
-    image: linuxserver/sonarr:4.0.0-develop
+    profiles: ["vpn", "no-vpn"]
+    image: linuxserver/sonarr:4.0.8
     container_name: sonarr
     networks:
       # - mynetwork   # Comment this line if VPN is enabled
@@ -133,9 +136,10 @@ services:
     restart: unless-stopped
 
   prowlarr:
+    profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:latest
-
+    image: linuxserver/prowlarr:1.20.1
+    
     #Uncomment below if vpn is enabled
     depends_on:               # Uncomment this line if vpn is enabled
       - vpn                   # Uncomment this line if vpn is enabled
@@ -155,8 +159,25 @@ services:
     #   - 9696:9696
     restart: unless-stopped
 
+  jellyseerr:
+    profiles: ["vpn", "no-vpn"]
+    image: fallenbagel/jellyseerr:1.9.2
+    container_name: jellyseerr
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - jellyseerr-config:/app/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+
   jellyfin:
-    image: linuxserver/jellyfin:10.8.11
+    profiles: ["vpn", "no-vpn"]
+    image: linuxserver/jellyfin:10.9.8
     container_name: jellyfin
     networks:
       mynetwork:
@@ -174,23 +195,6 @@ services:
       - 8096:8096
       - 7359:7359/udp
       - 8920:8920
-    restart: unless-stopped
-
-  jellyseerr:
-    image: fallenbagel/jellyseerr:1.7.0
-    container_name: jellyseerr
-    networks:
-      mynetwork:
-        ipv4_address: ${JELLYSEERR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=UTC
-    ports:
-      - 5055:5055
-    volumes:
-      - jellyseerr-config:/app/config
-      - /mnt/usb1/torrent-downloads:/data
     restart: unless-stopped
 
   homepage:
@@ -271,6 +275,37 @@ services:
     command: tunnel run
     environment:
       - TUNNEL_TOKEN=eyJhIjoiODgzMWRlZWExMzQ0ZTEyNTFiOTI1ZDhmMzM1MmJmYmYiLCJ0IjoiNjQ3ZDQ3M2ItZjJiNi00ZTlhLWI1NjgtMTRkNDZlZWM5MWQ3IiwicyI6IlpEWmtNRFZsTUdJdE9XWTVaUzAwTjJZNUxXRmtNelF0TVdFeE16ZGhaR1ZrTkdJMSJ9
+  
+  # Doc: https://github.com/navilg/cleanmyarr
+  # cleanmyarr:
+  #   profiles: ["vpn", "no-vpn"]
+  #   depends_on:
+  #     - radarr
+  #     - sonarr
+  #   image: linuxshots/cleanmyarr:0.8.1
+  #   container_name: cleanmyarr
+  #   networks:
+  #     - mynetwork
+  #   volumes:
+  #     - cleanmyarr-config:/config
+    # restart: unless-stopped
+    # environment:
+    # - CMA_MAINTENANCE_CYCLE=${CMA_MAINTENANCE_CYCLE:-""}
+    # - CMA_DELETE_AFTER_DAYS=${CMA_DELETE_AFTER_DAYS:-""}
+    # - CMA_ENABLE_EMAIL_NOTIFICATION=${CMA_ENABLE_EMAIL_NOTIFICATION:-""}
+    # - CMA_SMTP_USERNAME=${CMA_SMTP_USERNAME:-""}
+    # - CMA_SMTP_ENCODED_PASSWORD=${CMA_SMTP_ENCODED_PASSWORD:-""}
+    # - CMA_SMTP_TO_EMAILS=${CMA_SMTP_TO_EMAILS:-""}
+    # - CMA_ENABLE_GOTIFY_NOTIFICATION=${CMA_ENABLE_GOTIFY_NOTIFICATION:-""}
+    # - CMA_GOTIFY_URL=${CMA_GOTIFY_URL:-""}
+    # - CMA_GOTIFY_ENCODED_APP_TOKEN=${CMA_GOTIFY_ENCODED_APP_TOKEN:-""}
+    # - CMA_ENABLE_TELEGRAM_NOTIFICATION=${CMA_ENABLE_TELEGRAM_NOTIFICATION:-""}
+    # - CMA_TELEGRAM_ENCODED_BOT_TOKEN=${CMA_TELEGRAM_ENCODED_BOT_TOKEN:-""}
+    # - CMA_TELEGRAM_CHAT_ID=${CMA_TELEGRAM_CHAT_ID:-""}
+    # - CMA_MONITOR_RADARR=${CMA_MONITOR_RADARR:-""}
+    # - CMA_RADARR_URL=${CMA_RADARR_URL:-""}
+    # - CMA_RADARR_ENCODED_API_KEY=${CMA_RADARR_ENCODED_API_KEY:-""}
+    # - CMA_RADARR_ENABLE_NOTIFICATION=${CMA_RADARR_ENABLE_NOTIFICATION:-""}
 
 volumes:
   torrent-downloads:
@@ -284,6 +319,7 @@ volumes:
   calibre-web-config:
   readarr-config:
   homepage-config:
+  # cleanmyarr-config:
 
 networks:
   mynetwork:
