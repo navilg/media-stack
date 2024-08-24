@@ -41,7 +41,12 @@ services:
 
     networks:
       - mynetwork
-    
+
+    # # Uncomment below when using VPN in an LXC container
+    # # Make sure to mount /dev/net/tun and /dev/net from underlaying host into your LXC.
+    # devices:
+    #   - /dev/net/tun:/dev/net/tun
+      
     # Uncomment/enable below ports if VPN is used/enabled
     # ports:
     #   # qbittorrent ports
