@@ -64,7 +64,7 @@ services:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:4.6.5
 
-    # Unomment below if vpn is enabled
+    # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
     #   - vpn                   # Uncomment this line if vpn is enabled
 
@@ -72,7 +72,7 @@ services:
     networks:               # Comment this line if vpn is enabled
       - mynetwork           # Comment this line if vpn is enabled
 
-    # Unomment below line if vpn is enabled
+    # Uncomment below line if vpn is enabled
     # network_mode: service:vpn
 
     environment:
@@ -225,6 +225,12 @@ services:
 
 volumes:
   torrent-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./test/
+       # With bind, the content of the folder will not be removed if the volume is deleted
+      o: bind
   radarr-config:
   sonarr-config:
   prowlarr-config:
