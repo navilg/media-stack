@@ -66,7 +66,8 @@ services:
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
-    #   - vpn                   # Uncomment this line if vpn is enabled
+      # vpn:                   # Uncomment this line if vpn is enabled
+      #   condition: service_healthy # Uncomment this line if vpn is enabled
 
     # Comment below lines if VPN is enabled
     networks:               # Comment this line if vpn is enabled
@@ -138,7 +139,8 @@ services:
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
-    #   - vpn                   # Uncomment this line if vpn is enabled
+      # vpn:                   # Uncomment this line if vpn is enabled
+      #   condition: service_healthy # Uncomment this line if vpn is enabled
     # network_mode: service:vpn # Uncomment this line if vpn is enabled
 
     networks:               # Comment this line if vpn is enabled
