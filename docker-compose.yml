@@ -228,7 +228,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./test/
+      device: /hdd/media-files/
        # With bind, the content of the folder will not be removed if the volume is deleted
       o: bind
   radarr-config:
