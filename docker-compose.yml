@@ -28,7 +28,7 @@ services:
 
   qbittorrent:
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:5.0.0-r2-ls359
     depends_on:
       - vpn
     network_mode: service:vpn
