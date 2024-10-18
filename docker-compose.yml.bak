@@ -1,0 +1,276 @@
+version: "3.9"
+name: media-stack
+services:
+
+  # To use/enable VPN, Run this compose file with --profile=vpn. Its highly recommended to use VPN.
+  vpn:
+    ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
+    profiles: ["vpn"]
+    container_name: vpn
+    image: qmcgaw/gluetun:v3.37.0
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=nordvpn
+      - OPENVPN_USER=8v5AjZCHTUbZzk9qoYxzcUDu
+      - OPENVPN_PASSWORD=1TRTfegmMMo9Pj6hFriTXRat
+      - RADARR_STATIC_CONTAINER_IP=172.20.0.7
+      - SONARR_STATIC_CONTAINER_IP=172.20.0.5
+      - READARR_STATIC_CONTAINER_IP=172.20.0.10
+
+      ## For list of server countries, visit https://raw.githubusercontent.com/qdm12/gluetun/master/internal/storage/servers.json
+      ## When VPN_SERVICE_PROVIDER is custom. Comment the below line
+      - SERVER_COUNTRIES=Israel  
+    
+      # - FREE_ONLY=on  # Valid with protonvpn only. Value willbe set "on" if using free subscription provided by protonvpn
+
+      ## Enable below if VPN_SERVICE_PROVIDER=custom
+      # - VPN_TYPE=openvpn # or wireguard. 
+
+      ## If VPN_TYPE is openvpn
+      # - OPENVPN_CUSTOM_CONFIG=/gluetun/custom.conf
+
+      ## If VPN_TYPE is wireguard. Replace below env variables as required.
+      # - VPN_ENDPOINT_IP=1.2.3.4                                               # Replace with your wg endpoint ip or domain
+      # - VPN_ENDPOINT_PORT=51820                                               # Replace with wg server port
+      # - WIREGUARD_PUBLIC_KEY=wAUaJMhAq3NFutLHIdF8AN0B5WG8RndfQKLPTEDHal0=     # Replace with your wg public key
+      # - WIREGUARD_PRIVATE_KEY=wOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=    # Replace with your wg client private key
+      # - WIREGUARD_PRESHARED_KEY=xOEI9rqqbDwnN8/Bpp22sVz48T71vJ4fYmFWujulwUU=  # Replaced with your wg pre-shared key
+      # - WIREGUARD_ADDRESSES="10.64.222.21/32"                                 # Replace with wg address
+
+    ## Enable volume if VPN_SERVICE_PROVIDER=custom and VPN_TYPE=openvpn is used
+    # volumes:
+      # - /yourpath/yourconfig.conf:/gluetun/config.conf:ro
+
+    networks:
+      - mynetwork
+    
+    # Uncomment/enable below ports if VPN is used/enabled
+    ports:
+    #   # qbittorrent ports
+       - 5080:5080
+       - 6881:6881
+       - 6881:6881/udp
+    #   # prowlarr ports
+       - 9696:9696
+    restart: "unless-stopped"
+
+  ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
+  ## Change password after install from UI --> Tools --> Options --> WebUI ##
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:4.6.4
+
+    # Unomment below if vpn is enabled
+    depends_on:               # Uncomment this line if vpn is enabled
+      - vpn                   # Uncomment this line if vpn is enabled
+
+    # Comment below lines if VPN is enabled
+    # networks:               # Comment this line if vpn is enabled
+    #   - mynetwork           # Comment this line if vpn is enabled
+
+    # Unomment below line if vpn is enabled
+    network_mode: service:vpn
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - WEBUI_PORT=5080
+    volumes:
+      - qbittorrent-config:/config
+      - torrent-downloads:/downloads
+
+    ## Comment/Disable below ports if VPN is enabled
+    # ports:
+    #   - 5080:5080
+    #   - 6881:6881
+    #   - 6881:6881/udp
+    restart: "unless-stopped"
+
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:5.3.6
+    networks:
+    #  - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+       mynetwork:
+         ipv4_address: 172.20.0.7 # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    ports:
+      - 7878:7878
+    volumes:
+      - radarr-config:/config
+      - torrent-downloads:/downloads
+    restart: "unless-stopped"
+
+  sonarr:
+    image: linuxserver/sonarr:4.0.1-develop
+    container_name: sonarr
+    networks:
+    #  - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+       mynetwork:
+         ipv4_address: 172.20.0.5 # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - sonarr-config:/config
+      - torrent-downloads:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    networks:
+      mynetwork:
+        ipv4_address: 172.20.0.11 # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - LOG_LEVEL=debug
+      - TZ=UTC
+    ports:
+      - 5055:5055
+    volumes:
+      - overseerr-config:/app/config
+    restart: unless-stopped
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    networks:
+      mynetwork:
+        ipv4_address: 172.20.0.12
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - VERSION=docker
+      - PLEX_CLAIM= #optional
+    volumes:
+      - plex-config:/config
+      - plex-config:/tv
+      - plex-config:/movies
+    restart: unless-stopped     
+
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    networks:
+       mynetwork:
+         ipv4_address: 172.20.0.10 #It should be available IPv4 address in range of docker network 'mynetwork' e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - readarr-config:/config
+      - readarr-config:/books #optional
+      - readarr-config:/downloads #optional
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+
+
+  prowlarr:
+    container_name: prowlarr
+    image: linuxserver/prowlarr:1.13.3
+
+    # Uncomment below if vpn is enabled
+    depends_on:               # Uncomment this line if vpn is enabled
+      - vpn                   # Uncomment this line if vpn is enabled
+    network_mode: service:vpn # Uncomment this line if vpn is enabled
+
+    #networks:               # Comment this line if vpn is enabled
+     # - mynetwork           # Comment this line if vpn is enabled
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - prowlarr-config:/config
+
+    # Comment below ports if VPN is enabled.
+    #ports:
+    #  - 9696:9696
+    restart: unless-stopped
+
+  jellyfin:
+    image: linuxserver/jellyfin:10.8.13
+    container_name: jellyfin
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - jellyfin-config:/config
+      - torrent-downloads:/data
+  # devices:
+   #  - /dev/videoN:/dev/videoN # Mount GPU device 
+    ports:
+      - 8096:8096
+      - 7359:7359/udp
+      - 8920:8920
+    restart: unless-stopped
+
+#---------------------------------------------------------------------#
+#     Homarr - A simple, yet powerful dashboard for your server.     #
+#---------------------------------------------------------------------#
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - ./homarr/configs:/app/data/configs
+      - ./homarr/icons:/app/public/icons
+      - ./homarr/data:/data
+    ports:
+      - 7575:7575
+  nginx:
+    image: nginx:1.25.1-alpine
+    container_name: nginx
+    networks:
+      - mynetwork
+    volumes:
+      - nginx-config:/etc/nginx
+      - letsencrypt:/etc/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+  
+
+volumes:
+  torrent-downloads:
+  radarr-config:
+  sonarr-config:
+  prowlarr-config:
+  jellyfin-config:
+  qbittorrent-config:
+  nginx-config:
+  letsencrypt:
+  readarr-config:
+  plex-config:
+  overseerr-config:
+
+networks:
+  mynetwork:
+    external: true

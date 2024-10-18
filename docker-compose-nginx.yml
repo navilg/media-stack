@@ -1,23 +1,18 @@
-version: '2'
+version: '3'
 name: nginx
 services:
   nginx:
-    image: nginx:1.25.1-alpine
+    image: nginx:1.25.4-alpine
     container_name: nginx
     networks:
       - mynetwork
     volumes:
-      - nginx-config:/etc/nginx
-      - letsencrypt:/etc/letsencrypt
+      - /var/www/html:/usr/share/nginx/html
     ports:
       - 80:80
       - 443:443
-    restart: unless-stopped
-
-volumes:
-  nginx-config:
-  letsencrypt:
+    restart: always
 
 networks:
   mynetwork:
-    external: true
+    external: false
