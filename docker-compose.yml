@@ -58,51 +58,53 @@ services:
     profiles: ["vpn", "no-vpn"]   
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
+    networks:
+      - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
       - sabnzbd-config:/config
-      - usenet-downloads:/downloads
+      - usenet-downloads:/downloads<
       - temp-downloads:/temp-downloads
     ports:
       - 1337:8080
     restart: unless-stopped
-  ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
-  ## Change password after install from UI --> Tools --> Options --> WebUI ##
-  qbittorrent:
-    profiles: ["vpn", "no-vpn"]   
-    container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.6.7
+  # ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
+  # ## Change password after install from UI --> Tools --> Options --> WebUI ##
+  # qbittorrent:
+  #   profiles: ["vpn", "no-vpn"]
+  #   container_name: qbittorrent
+  #   image: lscr.io/linuxserver/qbittorrent:4.6.7
 
-    # Unomment below if vpn is enabled
-    # depends_on:               # Uncomment this line if vpn is enabled
-      # vpn:                   # Uncomment this line if vpn is enabled
-      #   condition: service_healthy # Uncomment this line if vpn is enabled
+  #   # Unomment below if vpn is enabled
+  #   # depends_on:               # Uncomment this line if vpn is enabled
+  #     # vpn:                   # Uncomment this line if vpn is enabled
+  #     #   condition: service_healthy # Uncomment this line if vpn is enabled
 
-    # Comment below lines if VPN is enabled
-    networks:               # Comment this line if vpn is enabled
-      - mynetwork           # Comment this line if vpn is enabled
+  #   # Comment below lines if VPN is enabled
+  #   networks:               # Comment this line if vpn is enabled
+  #     - mynetwork           # Comment this line if vpn is enabled
 
-    # Unomment below line if vpn is enabled
-    # network_mode: service:vpn
+  #   # Unomment below line if vpn is enabled
+  #   # network_mode: service:vpn
 
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=UTC
-      - WEBUI_PORT=5080
-    volumes:
-      - qbittorrent-config:/config
-      - torrent-downloads:/downloads
-      - temp-downloads:/temp-downloads
-    ## Comment/Disable below ports if VPN is enabled
-    ports:
-      - 5080:5080
-      - 6881:6881
-      - 6881:6881/udp
-    restart: "unless-stopped"
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=UTC
+  #     - WEBUI_PORT=5080
+  #   volumes:
+  #     - qbittorrent-config:/config
+  #     - torrent-downloads:/downloads
+  #     - temp-downloads:/temp-downloads
+  #   ## Comment/Disable below ports if VPN is enabled
+  #   ports:
+  #     - 5080:5080
+  #     - 6881:6881
+  #     - 6881:6881/udp
+  #   restart: "unless-stopped"
 
   radarr:
     profiles: ["vpn", "no-vpn"]
@@ -121,8 +123,25 @@ services:
       - 7878:7878
     volumes:
       - radarr-config:/config
-      - torrent-downloads:/downloads
+      - usenet-downloads:/downloads
     restart: "unless-stopped"
+  headphones:
+    profiles: ["vpn", "no-vpn"]
+    image: lscr.io/linuxserver/headphones:latest
+    container_name: headphones
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - lidarr-config:/config
+      - usenet-downloads:/downloads
+      - music-library:/music
+    ports:
+      - 8181:8181
+    networks:
+      - mynetwork 
+    restart: unless-stopped
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
@@ -139,9 +158,25 @@ services:
       - TZ=UTC
     volumes:
       - sonarr-config:/config
-      - torrent-downloads:/downloads
+      - usenet-downloads:/downloads
     ports:
       - 8989:8989
+    restart: unless-stopped
+    
+  #newznab / usenet downloads
+  nzbhydra2:
+    image: lscr.io/linuxserver/nzbhydra2:latest
+    profiles: ["vpn", "no-vpn"]
+    container_name: nzbhydra2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - nzbhydra2-config:/config
+      - usenet-downloads:/downloads
+    ports:
+      - 5076:5076
     restart: unless-stopped
 
   prowlarr:
@@ -185,6 +220,23 @@ services:
       - 5055:5055
     restart: unless-stopped
 
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    profiles: ["vpn", "no-vpn"]
+    container_name: lazylibrarian
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - DOCKER_MODS=linuxserver/mods:universal-calibre|linuxserver/mods:lazylibrarian-ffmpeg #optional
+    volumes:
+      - lazylibrarian-config:/config
+      # - torrent-downloads:/downloads/torrents
+      - usenet-downloads:/downloads
+    ports:
+      - 5299:5299
+    restart: unless-stopped
+
   jellyfin:
     profiles: ["vpn", "no-vpn"]
     image: linuxserver/jellyfin:10.9.11
@@ -197,8 +249,8 @@ services:
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - torrent-downloads:/torrents
-      - usenet-downloads:/usenet
+      # - torrent-downloads:/downloads/torrents
+      - usenet-downloads:/downloads
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
@@ -206,6 +258,7 @@ services:
       - 7359:7359/udp
       - 8920:8920
     restart: unless-stopped
+    
   lunasea:
     stdin_open: true
     tty: true
@@ -216,7 +269,7 @@ services:
         - 8082:80
     image: ddsderek/lunasea:latest
     volumes:
-      - lunaseas-config:/config
+      - lunasea-config:/config
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
   #   profiles: ["vpn", "no-vpn"]
@@ -246,9 +299,25 @@ services:
     # - CMA_RADARR_ENABLE_NOTIFICATION=${CMA_RADARR_ENABLE_NOTIFICATION:-""}
 
 volumes:
-  torrent-downloads:
+  # torrent-downloads
   temp-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${TMP_PATH}
+      o: bind
   usenet-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DOWNLOAD_PATH}
+      o: bind
+  music-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MUSIC_PATH}
+      o: bind
   radarr-config:
   sonarr-config:
   prowlarr-config:
@@ -257,8 +326,11 @@ volumes:
   jellyseerr-config:
   sabnzbd-config:
   lunasea-config:
+  lazylibrarian-config:
+  nzbhydra2-config:
+  lidarr-config:
+  plex-config:
   # cleanmyarr-config:
-
 networks:
   mynetwork:
     external: true

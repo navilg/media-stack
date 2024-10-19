@@ -1,2 +1,2 @@
 #/bin/bash
-docker-compose --profile no-vpn up -d
+docker compose --profile no-vpn up -d
