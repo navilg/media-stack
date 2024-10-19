@@ -1,7 +1,5 @@
-version: "3.9"
-name: media-stack
+name: lunasea-media-stack
 services:
-
   # To use/enable VPN, Run this compose file with --profile=vpn. Its highly recommended to use VPN.
   vpn:
     ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
@@ -56,11 +54,25 @@ services:
     #   # prowlarr ports
     #   - 9696:9696
     restart: "unless-stopped"
-
+  sabnzbd:
+    profiles: ["vpn", "no-vpn"]   
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - sabnzbd-config:/config
+      - usenet-downloads:/downloads
+      - temp-downloads:/temp-downloads
+    ports:
+      - 1337:8080
+    restart: unless-stopped
   ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
   ## Change password after install from UI --> Tools --> Options --> WebUI ##
   qbittorrent:
-    profiles: ["vpn", "no-vpn"]
+    profiles: ["vpn", "no-vpn"]   
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:4.6.7
 
@@ -84,7 +96,7 @@ services:
     volumes:
       - qbittorrent-config:/config
       - torrent-downloads:/downloads
-
+      - temp-downloads:/temp-downloads
     ## Comment/Disable below ports if VPN is enabled
     ports:
       - 5080:5080
@@ -185,7 +197,8 @@ services:
       - TZ=UTC
     volumes:
       - jellyfin-config:/config
-      - torrent-downloads:/data
+      - torrent-downloads:/torrents
+      - usenet-downloads:/usenet
   # devices:
    #  - /dev/videoN:/dev/videoN # Mount GPU device 
     ports:
@@ -193,7 +206,17 @@ services:
       - 7359:7359/udp
       - 8920:8920
     restart: unless-stopped
-  
+  lunasea:
+    stdin_open: true
+    tty: true
+    profiles: ["vpn", "no-vpn"]  
+    container_name: lunasea
+    restart: always
+    ports:
+        - 8082:80
+    image: ddsderek/lunasea:latest
+    volumes:
+      - lunaseas-config:/config
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
   #   profiles: ["vpn", "no-vpn"]
@@ -206,10 +229,7 @@ services:
   #     - mynetwork
   #   volumes:
   #     - cleanmyarr-config:/config
-    # restart: unless-stopped
-    # environment:
-    # - CMA_MAINTENANCE_CYCLE=${CMA_MAINTENANCE_CYCLE:-""}
-    # - CMA_DELETE_AFTER_DAYS=${CMA_DELETE_AFTER_DAYS:-""}
+    # restart: unless-stopped7878S:-""}
     # - CMA_ENABLE_EMAIL_NOTIFICATION=${CMA_ENABLE_EMAIL_NOTIFICATION:-""}
     # - CMA_SMTP_USERNAME=${CMA_SMTP_USERNAME:-""}
     # - CMA_SMTP_ENCODED_PASSWORD=${CMA_SMTP_ENCODED_PASSWORD:-""}
@@ -227,12 +247,16 @@ services:
 
 volumes:
   torrent-downloads:
+  temp-downloads:
+  usenet-downloads:
   radarr-config:
   sonarr-config:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
   jellyseerr-config:
+  sabnzbd-config:
+  lunasea-config:
   # cleanmyarr-config:
 
 networks:
