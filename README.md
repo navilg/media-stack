@@ -45,9 +45,7 @@ Follow https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers to config
 By default, VPN is disabled in `docker-compose.yml`. We just need to comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
 
 Update the `docker-compose.yml` file as guided per instructions in commit messsages in same file and follow below commands to deploy the stack.
-
 To deploy the stack with VPN (with nordvpn):
-
 ```bash
 VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland RADARR_STATIC_CONTAINER_IP=radarr-container-static-ip SONARR_STATIC_CONTAINER_IP=sonarr-container-static-ip docker compose --profile vpn up -d
 
@@ -100,7 +98,7 @@ Sonarr can also be configured in similar way.
 
 ## Configure Jellyfin
 
-- Open Jellyfin at http://localhost:8096
+- Open Jellyfin at http://localh?ost:8096
 - When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
 

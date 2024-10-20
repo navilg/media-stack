@@ -125,6 +125,7 @@ services:
       - radarr-config:/config
       - usenet-downloads:/downloads
     restart: "unless-stopped"
+
   headphones:
     profiles: ["vpn", "no-vpn"]
     image: lscr.io/linuxserver/headphones:latest
@@ -134,9 +135,9 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - lidarr-config:/config
+      - headphones-config:/config
       - usenet-downloads:/downloads
-      - music-library:/music
+      - music-library:/music 
     ports:
       - 8181:8181
     networks:
@@ -216,6 +217,9 @@ services:
       - TZ=UTC
     volumes:
       - jellyseerr-config:/app/config
+      - music-library:/music
+      - movies-library:/movies
+      - tv-series-library:/tv-series
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -223,6 +227,8 @@ services:
   lazylibrarian:
     image: lscr.io/linuxserver/lazylibrarian:latest
     profiles: ["vpn", "no-vpn"]
+    networks:               # Comment this line if vpn is enabled
+      - mynetwork           
     container_name: lazylibrarian
     environment:
       - PUID=1000
@@ -232,37 +238,84 @@ services:
     volumes:
       - lazylibrarian-config:/config
       # - torrent-downloads:/downloads/torrents
-      - usenet-downloads:/downloads
+      - usenet-downloads:/downloadsd
+      - music-library:/music
+      - movies-library:/movies
+      - tv-series-library:/tv-series
     ports:
       - 5299:5299
     restart: unless-stopped
 
-  jellyfin:
+  # jellyfin:
+  #   profiles: ["vpn", "no-vpn"]
+  #   image: linuxserver/jellyfin:10.9.11
+  #   container_name: jellyfin
+  #   networks:
+  #     - mynetwork
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=UTC
+  #   volumes:
+  #     - jellyfin-config:/config
+  #     # - torrent-downloads:/downloads/torrents
+  #     - usenet-downloads:/downloads
+  #     - music-library:/music
+  #     - movies-library:/movies
+  #     - tv-series-library:/tv-series
+  # # devices:
+  #  #  - /dev/videoN:/dev/videoN # Mount GPU device 
+  #   ports:
+  #     - 8096:8096
+  #     - 7359:7359/udp
+  #     - 8920:8920
+  #   restart: unless-stopped
+  plex:
+    image: lscr.io/linuxserver/plex:latest
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/jellyfin:10.9.11
-    container_name: jellyfin
+    container_name: plex
+    ports:
+      - 32400:32400
     networks:
-      - mynetwork
+      - mynetwork           
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - TZ=Etc/UTC
+      - VERSION=docker
+      - PLEX_CLAIM=${PLEX_CLAIM} #optional
     volumes:
-      - jellyfin-config:/config
-      # - torrent-downloads:/downloads/torrents
+      - plex-config:/config
+      - music-library:/music
+      - movies-library:/movies
+      - tv-series-library:/tv-series
       - usenet-downloads:/downloads
-  # devices:
-   #  - /dev/videoN:/dev/videoN # Mount GPU device 
-    ports:
-      - 8096:8096
-      - 7359:7359/udp
-      - 8920:8920
     restart: unless-stopped
-    
+  plex-meta-manager:
+    image: lscr.io/linuxserver/plex-meta-manager:latest
+    container_name: plex-meta-manager
+    profiles: ["vpn", "no-vpn"]
+    networks:
+      - mynetwork          
+    depends_on:
+      - plex
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - plex-meta-manager-config:/config
+      - usenet-downloads:/downloads
+      - music-library:/music
+      - movies-library:/movies
+      - tv-series-library:/tv-series
+    restart: unless-stopped
   lunasea:
     stdin_open: true
     tty: true
     profiles: ["vpn", "no-vpn"]  
+    networks:
+      - mynetwork          
     container_name: lunasea
     restart: always
     ports:
@@ -318,10 +371,23 @@ volumes:
       type: none
       device: ${MUSIC_PATH}
       o: bind
+  movies-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MOVIES_PATH}
+      o: bind
+  tv-series-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${TV_SERIES_PATH}
+      o: bind
   radarr-config:
   sonarr-config:
   prowlarr-config:
   jellyfin-config:
+  headphones-config:
   qbittorrent-config:
   jellyseerr-config:
   sabnzbd-config:
@@ -330,6 +396,7 @@ volumes:
   nzbhydra2-config:
   lidarr-config:
   plex-config:
+  plex-meta-manager-config:
   # cleanmyarr-config:
 networks:
   mynetwork:

@@ -1,0 +1,54 @@
+name: nextcloud
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    networks:
+      - mynetwork
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - nextcloud-config:/data
+      - usenet-downloads:/downloads
+      - music-library:/music
+    ports:
+      - 8443:443
+    restart: unless-stopped 
+volumes:
+  # torrent-downloads
+  nextcloud-config:
+  temp-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${TMP_PATH}
+      o: bind
+  usenet-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DOWNLOAD_PATH}
+      o: bind
+  music-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MUSIC_PATH}
+      o: bind
+
+  # nextcloud-aio:
+  #   profiles: ["vpn", "no-vpn"]
+  #   container_name: nextcloud-aio-mastercontainer
+  #   networks:
+  #     - mynetwork
+  #   restart: always
+  #   ports:
+  #       - 7431:80
+  #       - 8282:8080
+  #       - 8443:8443
+  #   volumes:
+  #       - nextcloud-config:/mnt/docker-aio-config
+  #       - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   image: nextcloud/all-in-one:latest
