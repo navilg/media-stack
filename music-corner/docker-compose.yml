@@ -1,0 +1,102 @@
+name: cloudcrusaders-music-corner
+services:
+  # volumio:
+  #   restart: always
+  #   container_name: volumio
+  #   environment:
+  #       - HOST=http://192.168.178.69:3000
+  #   ports:
+  #       - 3000:3000
+  #   volumes:
+  #       - ${MUSIC_PATH}:/var/lib/mpd/music/:ro
+  #       - volumio-config:/data
+  #   devices:
+  #       - /dev/snd
+  #   image: jbonjean/volumio
+  navidrome:
+    image: deluan/navidrome:latest
+    ports:
+      - "4533:4533"
+    restart: unless-stopped
+    environment:
+      # Optional: put your config options customization here. Examples:
+      ND_SCANSCHEDULE: 1h
+      ND_LOGLEVEL: info  
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: "http://192.168.178.69:4533"
+    volumes:
+      - navidrome-config:/data
+      - "music-library:/music:ro"
+
+  kometa:
+    image: lscr.io/linuxserver/kometa:latest
+    container_name: kometa
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIME_ZONE}
+      - KOMETA_CONFIG=/config/config.yml #optional
+      - KOMETA_TIME=03:00 #optional
+      - KOMETA_RUN=False #optional
+      - KOMETA_TEST=False #optional
+      - KOMETA_NO_MISSING=False #optional
+    volumes:
+      - kometa-config:/config
+    restart: unless-stopped
+  your_spotify_rulez:
+    image: lscr.io/linuxserver/your_spotify:latest
+    container_name: your_spotify_rulez
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIME_ZONE}
+      - APP_URL=http://192.168.178.69:8008
+      - SPOTIFY_SECRET=${SPOTIFY_SECRET_API_KEY}
+      - SPOTIFY_PUBLIC= ${SPOTIFY_PUBLIC_API_KEY}
+      - CORS=http://192.168.178.69:8008
+      - MONGO_ENDPOINT=mongodb://192.168.178.69:27017/your_spotify
+    ports:
+      - 8008:80
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - dbdata6:/data/db
+volumes:
+  volumio-config:
+  kometa-config:
+  navidrome-config:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${NAVIDRONE_CONFIG}
+      o: bind
+  dbdata6:
+  usenet-downloads:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${DOWNLOAD_PATH}
+      o: bind
+  music-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MUSIC_PATH}
+      o: bind
+  movies-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${MOVIES_PATH}
+      o: bind
+  tv-series-library:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${TV_SERIES_PATH}
+      o: bind

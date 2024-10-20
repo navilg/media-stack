@@ -63,49 +63,35 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - sabnzbd-config:/config
-      - usenet-downloads:/downloads<
+      - usenet-downloads:/downloads
       - temp-downloads:/temp-downloads
     ports:
       - 1337:8080
     restart: unless-stopped
-  # ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
-  # ## Change password after install from UI --> Tools --> Options --> WebUI ##
-  # qbittorrent:
-  #   profiles: ["vpn", "no-vpn"]
-  #   container_name: qbittorrent
-  #   image: lscr.io/linuxserver/qbittorrent:4.6.7
-
-  #   # Unomment below if vpn is enabled
-  #   # depends_on:               # Uncomment this line if vpn is enabled
-  #     # vpn:                   # Uncomment this line if vpn is enabled
-  #     #   condition: service_healthy # Uncomment this line if vpn is enabled
-
-  #   # Comment below lines if VPN is enabled
-  #   networks:               # Comment this line if vpn is enabled
-  #     - mynetwork           # Comment this line if vpn is enabled
-
-  #   # Unomment below line if vpn is enabled
-  #   # network_mode: service:vpn
-
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=UTC
-  #     - WEBUI_PORT=5080
-  #   volumes:
-  #     - qbittorrent-config:/config
-  #     - torrent-downloads:/downloads
-  #     - temp-downloads:/temp-downloads
-  #   ## Comment/Disable below ports if VPN is enabled
+  # jdownloader:
+  #   image: jlesage/jdownloader-2
   #   ports:
-  #     - 5080:5080
-  #     - 6881:6881
-  #     - 6881:6881/udp
-  #   restart: "unless-stopped"
-
+  #     - "5800:5800"
+  #   volumes:
+  #     - "jdownloader-config:/config:rw"
+  #     - usenet-downloads:/output  
+  maintainerr:
+    profiles: ["vpn", "no-vpn"]
+    container_name: maintainerr
+    networks:
+      - mynetwork 
+    environment:
+        - TZ=${TIME_ZONE}
+    volumes:
+      - maintainerr-config:/opt/data
+    user: 1000:1000
+    ports:
+        - 6246:6246
+    restart: unless-stopped
+    image: ghcr.io/jorenn92/maintainerr:latest
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
@@ -118,32 +104,64 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - TZ=${TIME_ZONE}
     ports:
       - 7878:7878
     volumes:
       - radarr-config:/config
       - usenet-downloads:/downloads
     restart: "unless-stopped"
-
-  headphones:
+  # headphones:
+  #   profiles: ["vpn", "no-vpn"]
+  #   image: lscr.io/linuxserver/headphones:latest
+  #   container_name: headphones
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TIME_ZONE}
+  #   volumes:
+  #     - headphones-config:/config
+  #     - usenet-downloads:/downloads
+  #     - music-library:/music 
+  #   ports:
+  #     - 8181:8181
+  #   networks:
+  #     - mynetwork 
+  #   restart: unless-stopped
+  lidarr:
     profiles: ["vpn", "no-vpn"]
-    image: lscr.io/linuxserver/headphones:latest
-    container_name: headphones
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
-      - headphones-config:/config
+      - lidarr-config:/config
       - usenet-downloads:/downloads
       - music-library:/music 
     ports:
-      - 8181:8181
+      - 8686:8686
     networks:
       - mynetwork 
     restart: unless-stopped
-
+  beets:
+    image: lscr.io/linuxserver/beets:latest
+    container_name: beets
+    profiles: ["vpn", "no-vpn"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIME_ZONE}
+    networks:
+      - mynetwork
+    volumes:
+      - beets-config:/config
+      - music-library:/music
+      - usenet-downloads:/downloads
+    ports:
+      - 8337:8337
+    restart: unless-stopped
   sonarr:
     profiles: ["vpn", "no-vpn"]
     image: linuxserver/sonarr:4.0.9
@@ -156,7 +174,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - sonarr-config:/config
       - usenet-downloads:/downloads
@@ -172,7 +190,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - nzbhydra2-config:/config
       - usenet-downloads:/downloads
@@ -196,7 +214,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - prowlarr-config:/config
 
@@ -214,7 +232,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - jellyseerr-config:/app/config
       - music-library:/music
@@ -233,7 +251,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
       - DOCKER_MODS=linuxserver/mods:universal-calibre|linuxserver/mods:lazylibrarian-ffmpeg #optional
     volumes:
       - lazylibrarian-config:/config
@@ -255,7 +273,7 @@ services:
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
-  #     - TZ=UTC
+  #     - TZ=${TIME_ZONE}
   #   volumes:
   #     - jellyfin-config:/config
   #     # - torrent-downloads:/downloads/torrents
@@ -281,7 +299,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
       - VERSION=docker
       - PLEX_CLAIM=${PLEX_CLAIM} #optional
     volumes:
@@ -302,7 +320,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TIME_ZONE}
     volumes:
       - plex-meta-manager-config:/config
       - usenet-downloads:/downloads
@@ -317,12 +335,41 @@ services:
     networks:
       - mynetwork          
     container_name: lunasea
-    restart: always
+    restart: unless-stopped
     ports:
         - 8082:80
     image: ddsderek/lunasea:latest
     volumes:
       - lunasea-config:/config
+  heimdall:
+    image: lscr.io/linuxserver/heimdall:latest
+    container_name: heimdall
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIME_ZONE}
+    volumes:
+      - heimdall-config:/config
+    ports:
+      - 8083:80
+      - 9443:443
+    profiles: ["vpn", "no-vpn"]
+    restart: unless-stopped
+    depends_on:
+      - lunasea
+      - plex-meta-manager
+      - plex
+      - nzbhydra2
+      - sonarr
+      - sabnzbd
+      - radarr
+      - prowlarr
+      - jellyseerr
+      # - headphones
+      - lazylibrarian
+      - beets
+    networks:
+      - mynetwork
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
   #   profiles: ["vpn", "no-vpn"]
@@ -388,15 +435,19 @@ volumes:
   prowlarr-config:
   jellyfin-config:
   headphones-config:
-  qbittorrent-config:
+  # qbittorrent-config:
   jellyseerr-config:
+  heimdall-config:
   sabnzbd-config:
   lunasea-config:
   lazylibrarian-config:
   nzbhydra2-config:
+  # jdownloader-config:
+  maintainerr-config:
   lidarr-config:
   plex-config:
   plex-meta-manager-config:
+  beets-config:
   # cleanmyarr-config:
 networks:
   mynetwork:
