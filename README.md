@@ -14,6 +14,16 @@ Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr and Jellyfi
 
 ## Install media stack
 
+
+> **WARNING for armv7 users:** Breaking changes in Jellyseerr version 2.0.x. Jellyseerr 2.0.x have dropped the support for armv7 container image. Support for arm64 is still present. If you are using media stack on armv7, You may need to use Jellyseerr v1.9.x until support is back for armv7.
+> Details here: 
+>
+> https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.0
+>
+> https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.1
+>
+
+
 There are two ways this stack can be deployed.
 
 1. With a VPN (Recommended)

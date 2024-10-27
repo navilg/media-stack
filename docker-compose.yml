@@ -7,7 +7,7 @@ services:
     ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.39.0
+    image: qmcgaw/gluetun:v3.39.1
     cap_add:
       - NET_ADMIN
     environment:
@@ -62,7 +62,7 @@ services:
   qbittorrent:
     profiles: ["vpn", "no-vpn"]
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:4.6.7
+    image: lscr.io/linuxserver/qbittorrent:5.0.0
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -95,7 +95,7 @@ services:
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.10.4
+    image: lscr.io/linuxserver/radarr:5.13.1
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -114,7 +114,7 @@ services:
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/sonarr:4.0.9
+    image: linuxserver/sonarr:4.0.10
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -135,7 +135,7 @@ services:
   prowlarr:
     profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.23.1
+    image: linuxserver/prowlarr:1.25.4
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -159,7 +159,7 @@ services:
 
   jellyseerr:
     profiles: ["vpn", "no-vpn"]
-    image: fallenbagel/jellyseerr:1.9.2
+    image: fallenbagel/jellyseerr:2.0.1
     container_name: jellyseerr
     networks:
       - mynetwork
