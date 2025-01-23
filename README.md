@@ -114,6 +114,16 @@ Sonarr can also be configured in similar way.
 - When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
 
+## Configure FlareSolverr
+
+- Open the FlareSolverr web interface at `http://localhost:8191` to verify it is active.
+- Open Prowlarr at `http://localhost:9696`.
+- Go to `Settings` --> `Indexer Proxies` --> `Add Indexer Proxy`.
+- Choose FlareSolverr and set the following:
+    - **Name:** FlareSolverr
+    - **Base URL:** `http://flaresolverr:8191` (or the static container IP for FlareSolverr if VPN is enabled)
+    - **Test** --> **Save**.
+
 ## Configure Jellyseerr
 
 - Open Jellyfin at http://localhost:5055

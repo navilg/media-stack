@@ -110,6 +110,25 @@ services:
       - torrent-downloads:/downloads
     restart: "unless-stopped"
 
+  flaresolverr:
+    container_name: flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    networks:
+      - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+    #   mynetwork:
+    #     ipv4_address: ${FLARESOLVERRR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    ports:
+      - 8191:8191
+    volumes:
+      - flaresolverr-config:/config
+      - torrent-downloads:/downloads
+    restart: "unless-stopped"
+
   sonarr:
     profiles: ["vpn", "no-vpn"]
     image: linuxserver/sonarr:4.0.11
@@ -231,6 +250,7 @@ volumes:
   jellyfin-config:
   qbittorrent-config:
   jellyseerr-config:
+  flaresolverr-config:
   # cleanmyarr-config:
 
 networks:
