@@ -60,7 +60,7 @@ services:
   qbittorrent:
     profiles: ["vpn", "no-vpn"]
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:5.0.3
+    image: lscr.io/linuxserver/qbittorrent:5.0.4
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -93,7 +93,7 @@ services:
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.16.3
+    image: lscr.io/linuxserver/radarr:5.18.4
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -112,7 +112,7 @@ services:
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/sonarr:4.0.11
+    image: linuxserver/sonarr:4.0.13
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -133,7 +133,7 @@ services:
   prowlarr:
     profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.28.2
+    image: linuxserver/prowlarr:1.30.2
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -157,7 +157,7 @@ services:
 
   jellyseerr:
     profiles: ["vpn", "no-vpn"]
-    image: fallenbagel/jellyseerr:2.2.3
+    image: fallenbagel/jellyseerr:2.3.0
     container_name: jellyseerr
     networks:
       - mynetwork
@@ -173,7 +173,7 @@ services:
 
   jellyfin:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/jellyfin:10.10.3
+    image: linuxserver/jellyfin:10.10.6
     container_name: jellyfin
     networks:
       - mynetwork
