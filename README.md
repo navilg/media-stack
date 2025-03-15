@@ -2,91 +2,135 @@
 
 # media-stack
 
-A stack of self-hosted media managers, media streamer and AI movies/shows recommender along with VPN.
+A self-hosted media ecosystem that combines media management, streaming, AI-powered recommendations, and VPN.
 
-Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr, Jellyfin. and Recommendarr (An AI generated recommendations tool).
+This stack includes:
+
+- **VPN:** For secure and private media downloading
+- **Radarr:** For movie management
+- **Sonarr:** For TV show management
+- **Prowlarr:** A torrent indexer manager for Radarr/Sonarr
+- **qBittorrent:** Torrent client for downloading media
+- **Jellyseerr:** To manage media requests
+- **Jellyfin:** Open-source media streamer
+- **Recommendarr:** For AI-powered movie and show recommendations
 
 ## Requirements
 
-- Docker version 28.0.1 and above
-- Docker compose version v2.33.1 and above
-- It may also work on some of lower versions, but its not tested.
+- Docker version 28.0.1 or later
+- Docker compose version v2.33.1 or later
+- Older versions may work, but they have not been tested.
 
 ## Install media stack
 
-
-> **WARNING for armv7 users:** Breaking changes in Jellyseerr version 2.0.x. Jellyseerr 2.0.x have dropped the support for armv7 container image. Support for arm64 is still present. If you are using media stack on armv7, You may need to use Jellyseerr v1.9.x until support is back for armv7.
-> Details here: 
+> **⚠️ Warning for ARMv7 Users:**  
+> Jellyseerr **v2.0.x** introduces breaking changes, dropping support for the **ARMv7** container image. However, **ARM64** support remains available.  
+>  
+> If you're running media-stack on an **ARMv7** device, you may need to stick with **Jellyseerr v1.9.x** until support for ARMv7 is restored.  
+>  
+> **More details:**
 >
-> https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.0
->
-> https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.1
->
+> - [Jellyseerr v2.0.0 Release Notes](https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.0)
+> - [Jellyseerr v2.0.1 Release Notes](https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.1)
+
+There are three ways to deploy this stack:
+
+1. **With a VPN** (Recommended)  
+2. **Without a VPN**  
+3. **With Recommendarr** (An optional tool for AI-generated movie and show recommendations)  
+
+> **NOTE:** If you are installing this stack **without a VPN**, you **must** use the `no-vpn` profile.  
+> This requirement prevents accidental or unintentional deployment of media-stack without VPN.  
+>  
+> Running the `docker compose` command without a profile **will not deploy anything**.  
+>  
+> Check the installation steps below. 
 
 
-There are three ways this stack can be deployed.
-
-1. With a VPN (Recommended)
-2. Without a VPN
-3. With Recommendarr (An optional tool for AI-generated movie and show recommendations)
-
-> **NOTE:** If you are installing this stack without VPN, You must use `no-vpn` profile. This has been made mandatory to avoid accidental/unknowingly deployment of media-stack without VPN.
-> Running `docker compose` command without a profile will not deploy anything.
->
-> Check installation steps below.
->
-
-
-Before we deploy the stack, We must create docker network first
+Before deploying the stack, you must first create a Docker network:  
 
 ```bash
 docker network create --subnet 172.20.0.0/16 mynetwork
-# Update CIDR range as per your IP range availability
+# Update the CIDR range based on your available IP range
 ```
 
-**Deploy the stack with VPN**
+When VPN is enabled, **qBittorrent** and **Prowlarr** will run behind the VPN for added privacy.  
 
-If VPN is enabled, qBittorrent and Prowlarr will be put behind VPN.
+By default, **NordVPN** is used in `docker-compose.yml`, but you can switch to:
 
-By default, NordVPN is used in `docker-compose.yml` file. This can be updated to use ExpressVPN, SurfShark, ProtonVPN, Custom OpenVPN or Wireguard VPN. It uses OpenVPN type for all the providers. 
+- **ExpressVPN**  
+- **SurfShark**  
+- **ProtonVPN**  
+- **Custom OpenVPN**  
+- **WireGuard VPN**
 
-Check respective document of your VPN provider to generate OpenVPN username and password.
-Follow https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers to configure gluetun for your VPN provider.
+All providers use the **OpenVPN** protocol.
 
-By default, VPN is disabled in `docker-compose.yml`. We just need to comment and uncomment few lines in `docker-compose.yml` file to enable and use VPN. Go through the comment messages in `docker-compose.yml` file to update them accordingly. Its very well guided in the compose file itself.
+➡️ **Full list of supported VPN providers:** [VPN Providers](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers)
 
-Update the `docker-compose.yml` file as guided per instructions in commit messsages in same file and follow below commands to deploy the stack.
+### Configure Your VPN Provider  
 
-To deploy the stack with VPN (with nordvpn):
+Refer to your VPN provider's documentation to generate an **OpenVPN username and password**.  
+For setup instructions, check:  
+➡️ [Gluetun VPN Setup Guide](https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers)
+
+### Enabling VPN in `docker-compose.yml`  
+
+By default, **VPN is disabled** in `docker-compose.yml`. To enable it, simply **comment/uncomment** the required lines in the file.  
+The `docker-compose.yml` file includes clear instructions in the comments to guide you through the process.  
+
+Once updated, follow the steps below to deploy the stack with VPN.  
+
+### Deploying the Stack with VPN (NordVPN Example)  
 
 ```bash
 VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland RADARR_STATIC_CONTAINER_IP=radarr-container-static-ip SONARR_STATIC_CONTAINER_IP=sonarr-container-static-ip docker compose --profile vpn up -d
 
-# docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
-```
+# OPTIONAL: Use Nginx as a reverse proxy
+# docker compose -f docker-compose-nginx.yml up -d
+```  
 
-*Static container IP address is needed when prowlarr is behind VPN. This is because in this case Prowlar can reach out to Radarr and Sonarr only with their container IP addresses. With static IPs of both, We can configure them in Prowlarr without need of changing it everytime container restarts.*
+### Static Container IP Requirement  
 
-*This is set using RADARR_STATIC_CONTAINER_IP and SONARR_STATIC_CONTAINER_IP variables.*
+A **static container IP address** is needed when **Prowlarr** is behind a VPN.  
+Since Prowlarr can only communicate with **Radarr** and **Sonarr** using their **container IP addresses**,  
+these must be **manually assigned** to avoid connection issues when containers restart.  
 
-**Deploy the stack without VPN**
+Use the following environment variables to set static IPs:  
 
-To deploy the stack without VPN (highly discouraged), Run below command.
+- `RADARR_STATIC_CONTAINER_IP`  
+- `SONARR_STATIC_CONTAINER_IP`  
+
+## Deploy the Stack Without VPN  
+
+🚨 **Warning:** Deploying without a VPN is **highly discouraged** as it may expose your IP address when torrenting media.  
+
+To proceed without VPN, run the following command:  
 
 ```bash
 docker compose --profile no-vpn up -d
-# docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
+
+# OPTIONAL: Use Nginx as a reverse proxy
+# docker compose -f docker-compose-nginx.yml up -d
 ```
 
-**With Recommendarr (An optional tool for AI-generated movie and show recommendations)**
+## Deploy the Stack with Recommendarr (Optional)  
 
-Recommendarr is a web application that generates personalized TV show and movie recommendations based on your Sonarr, Radarr, Trakt (Optional) and Jellyfin libraries using AI.
+**Recommendarr** is a web application that uses AI to generate personalized TV show and movie recommendations based on your: 
 
-To deploy the stack with recommendarr use below command:
+- **Sonarr** library  
+- **Radarr** library 
+- **Jellyfin** watchlist and library
+- **Trakt** watchlist (Optional)
+
+### Deploying with Recommendarr  
+
+Run the following command based on your setup:  
 
 ```bash
-COMPOSE_PROFILES=vpn,recommendarr docker compose up -d # With VPN
-# COMPOSE_PROFILES=no-vpn,recommendarr docker compose up -d # Without VPN
+COMPOSE_PROFILES=vpn,recommendarr docker compose up -d  # With VPN
+
+# COMPOSE_PROFILES=no-vpn,recommendarr docker compose up -d  # Without VPN
 ```
 
 ## Configure qBittorrent
@@ -305,3 +349,11 @@ location / {
 ```
 
 - Restart containers
+
+
+## Disclaimer  
+
+> Neither the author nor the developers of the code in this repository **condone or encourage** downloading, sharing, seeding, or peering of **copyrighted material**.  
+> Such activities are **illegal** under international laws.  
+>
+> This project is intended for **educational purposes only**.  
