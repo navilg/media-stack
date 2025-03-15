@@ -28,7 +28,7 @@ There are two ways this stack can be deployed.
 
 1. With a VPN (Recommended)
 2. Without a VPN
-3. With additional optional tools (Available optional tools: Recommendarr)
+3. With Recommendarr (An optional tool for AI-generated movie and show recommendations)
 
 > **NOTE:** If you are installing this stack without VPN, You must use `no-vpn` profile. This has been made mandatory to avoid accidental/unknowingly deployment of media-stack without VPN.
 > Running `docker compose` command without a profile will not deploy anything.
@@ -78,16 +78,15 @@ docker compose --profile no-vpn up -d
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
 ```
 
-**Deploy the stack with additional optional tools**
+**With Recommendarr (An optional tool for AI-generated movie and show recommendations)**
 
-To deploy the stack with additional tools use the tool's profile when deploying.
+Recommendarr is a web application that generates personalized TV show and movie recommendations based on your Sonarr, Radarr, Trakt (Optional) and Jellyfin libraries using AI.
 
-Available optional tools: recommendarr
+To deploy the stack with recommendarr use below command:
 
 ```bash
-COMPOSE_PROFILES=vpn,recommendarr docker compose up -d # You can add multiple optional profiles/tools separated by comma in COMPOSE_PROFILES
+COMPOSE_PROFILES=vpn,recommendarr docker compose up -d # With VPN
 # COMPOSE_PROFILES=no-vpn,recommendarr docker compose up -d # Without VPN
-
 ```
 
 ## Configure qBittorrent
