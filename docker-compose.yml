@@ -192,6 +192,23 @@ services:
       - 8920:8920
     restart: unless-stopped
   
+  recommendarr:
+    profiles: ["recommendarr"]
+    container_name: recommendarr
+    image: tannermiddleton/recommendarr:v1.2.70
+    networks:
+      - mynetwork
+    environment:
+      - NODE_ENV=production
+      - DOCKER_ENV=true
+      - PORT=3000
+      - PUBLIC_URL=https://localhost:3000 # Change this public URL if you are accessing recommendarr on a domain
+    volumes:
+      - recommendarr-data:/app/server/data
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+  
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
   #   profiles: ["vpn", "no-vpn"]
@@ -231,6 +248,7 @@ volumes:
   jellyfin-config:
   qbittorrent-config:
   jellyseerr-config:
+  recommendarr-data:
   # cleanmyarr-config:
 
 networks:

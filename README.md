@@ -2,14 +2,14 @@
 
 # media-stack
 
-A stack of self-hosted media managers and streamer along with VPN. 
+A stack of self-hosted media managers, media streamer and AI movies/shows recommender along with VPN.
 
-Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr and Jellyfin.
+Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr, Jellyfin. and Recommendarr (An AI generated recommendations tool).
 
 ## Requirements
 
-- Docker version 24.0.5 and above
-- Docker compose version v2.20.2 and above
+- Docker version 28.0.1 and above
+- Docker compose version v2.33.1 and above
 - It may also work on some of lower versions, but its not tested.
 
 ## Install media stack
@@ -28,6 +28,7 @@ There are two ways this stack can be deployed.
 
 1. With a VPN (Recommended)
 2. Without a VPN
+3. With additional optional tools (Available optional tools: Recommendarr)
 
 > **NOTE:** If you are installing this stack without VPN, You must use `no-vpn` profile. This has been made mandatory to avoid accidental/unknowingly deployment of media-stack without VPN.
 > Running `docker compose` command without a profile will not deploy anything.
@@ -75,6 +76,18 @@ To deploy the stack without VPN (highly discouraged), Run below command.
 ```bash
 docker compose --profile no-vpn up -d
 # docker compose -f docker-compose-nginx.yml up -d # OPTIONAL to use Nginx as reverse proxy
+```
+
+**Deploy the stack with additional optional tools**
+
+To deploy the stack with additional tools use the tool's profile when deploying.
+
+Available optional tools: recommendarr
+
+```bash
+COMPOSE_PROFILES=vpn,recommendarr docker compose up -d # You can add multiple optional profiles/tools separated by comma in COMPOSE_PROFILES
+# COMPOSE_PROFILES=no-vpn,recommendarr docker compose up -d # Without VPN
+
 ```
 
 ## Configure qBittorrent
@@ -130,6 +143,20 @@ Sonarr can also be configured in similar way.
 - This will add indexers in respective apps automatically.
 
 **Note: If VPN is enabled, then Prowlarr will not be able to reach radarr and sonarr with localhost or container service name. In that case use static IP for sonarr and radarr in radarr/sonarr server field (for e.g. http://172.19.0.5:8989). Prowlar will also be not reachable with its container/service name. Use `http://vpn:9696` instead in prowlar server field.**
+
+## Configure Recommendarr
+
+Recommendarr is an AI based movies/tvshows recommendation tool. To use this you will need any OpenAI API URL and API key with atleast one LLM model running.
+
+- Open Recommendarr at http://localhost:3000
+- Login with default username `admin` and password `1234`
+- Settings --> Account --> Change Password and change your admin password
+- Settings --> AI service --> API URL (Add OpenAI server API URL) --> API Key (Add OpenAPI server API key) --> Fetch available models --> Set Max tokens (best to keep it under 2000) --> Set Temperature (Best to keep at 0.8)
+- Settings --> Sonarr --> Sonarr URL (http://sonarr:8989) --> API Keys (Sonarr API Key) --> Test Connection --> Save Sonarr setting
+- Settings --> Radarr --> Radarr URL (http://radarr:7878) --> API Keys (Radarr API Key) --> Test Connection --> Save Radarr setting
+- Settings --> Jellyfin --> Jellyfin URL (http://jellyfin:8096) --> API Keys (Jellyfin API Key) --> User ID (Add your jellyfin user id) --> Test Connection --> Save Jellyfin settings
+- Test recommendarr: Recommendations --> Choose LLM Model from drop down list --> Enable Jellyfin Watch History toggle --> Select language --> Choose genres --> Discover recommendations
+- You should be able to see recommendations based on your Jellyfin watch history
 
 ## Configure Nginx
 
