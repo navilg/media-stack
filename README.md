@@ -24,7 +24,7 @@ Stack include VPN, Radarr, Sonarr, Prowlarr, qBittorrent, Jellyseerr, Jellyfin. 
 >
 
 
-There are two ways this stack can be deployed.
+There are three ways this stack can be deployed.
 
 1. With a VPN (Recommended)
 2. Without a VPN
