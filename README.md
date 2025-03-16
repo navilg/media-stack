@@ -189,7 +189,7 @@ Sonarr can also be configured in similar way.
 
 ## Configure Recommendarr
 
-Recommendarr is an AI based movies/tvshows recommendation tool. To use this you will need any OpenAI API URL and API key with atleast one LLM model running.
+Recommendarr is an AI based movies/tvshows recommendation tool. To use this you will need any OpenAI API URL and API key with atleast one LLM model running. You can host your own OpenAI server with AI model using ollama or LM Studio. Or you can check `https://openrouter.ai` for limited-free LLMs.
 
 - Open Recommendarr at http://localhost:3000
 - Login with default username `admin` and password `1234`
