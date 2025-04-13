@@ -93,7 +93,7 @@ services:
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.18.4
+    image: lscr.io/linuxserver/radarr:5.21.1
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -112,7 +112,7 @@ services:
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/sonarr:4.0.13
+    image: linuxserver/sonarr:4.0.14
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -133,7 +133,7 @@ services:
   prowlarr:
     profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:1.30.2
+    image: linuxserver/prowlarr:1.32.2
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -155,9 +155,26 @@ services:
       - 9696:9696
     restart: unless-stopped
 
+  recommendarr:
+    profiles: ["recommendarr"]
+    container_name: recommendarr
+    image: tannermiddleton/recommendarr:v1.3.0
+    networks:
+      - mynetwork
+    environment:
+      - NODE_ENV=production
+      - DOCKER_ENV=true
+      - PORT=3000
+      - PUBLIC_URL=https://localhost:3000 # Change this public URL if you are accessing recommendarr on a domain
+    volumes:
+      - recommendarr-data:/app/server/data
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+
   jellyseerr:
     profiles: ["vpn", "no-vpn"]
-    image: fallenbagel/jellyseerr:2.3.0
+    image: fallenbagel/jellyseerr:2.5.2
     container_name: jellyseerr
     networks:
       - mynetwork
@@ -192,22 +209,6 @@ services:
       - 8920:8920
     restart: unless-stopped
   
-  recommendarr:
-    profiles: ["recommendarr"]
-    container_name: recommendarr
-    image: tannermiddleton/recommendarr:v1.2.70
-    networks:
-      - mynetwork
-    environment:
-      - NODE_ENV=production
-      - DOCKER_ENV=true
-      - PORT=3000
-      - PUBLIC_URL=https://localhost:3000 # Change this public URL if you are accessing recommendarr on a domain
-    volumes:
-      - recommendarr-data:/app/server/data
-    ports:
-      - 3000:3000
-    restart: unless-stopped
   
   # Doc: https://github.com/navilg/cleanmyarr
   # cleanmyarr:
