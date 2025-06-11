@@ -24,14 +24,7 @@ This stack includes:
 ## Install media stack
 
 > **⚠️ Warning for ARMv7 Users:**  
-> Jellyseerr **v2.0.x** introduces breaking changes, dropping support for the **ARMv7** container image. However, **ARM64** support remains available.  
->  
-> If you're running media-stack on an **ARMv7** device, you may need to stick with **Jellyseerr v1.9.x** until support for ARMv7 is restored.  
->  
-> **More details:**
->
-> - [Jellyseerr v2.0.0 Release Notes](https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.0)
-> - [Jellyseerr v2.0.1 Release Notes](https://github.com/Fallenbagel/jellyseerr/releases/tag/v2.0.1)
+> Jellyseerr **v2.0.x** introduces breaking changes, dropping support for the **ARMv7** container image. However, **ARM64** support remains available. You will not be able to run Jellyseerr in ARMv7 CPU.
 
 There are three ways to deploy this stack:
 
