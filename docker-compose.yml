@@ -60,7 +60,7 @@ services:
   qbittorrent:
     profiles: ["vpn", "no-vpn"]
     container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:5.1.0
+    image: lscr.io/linuxserver/qbittorrent:5.1.2
 
     # Unomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -93,7 +93,7 @@ services:
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.24.1
+    image: lscr.io/linuxserver/radarr:5.26.2
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -112,7 +112,7 @@ services:
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/sonarr:4.0.14
+    image: linuxserver/sonarr:4.0.15
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -174,7 +174,7 @@ services:
 
   jellyseerr:
     profiles: ["vpn", "no-vpn"]
-    image: fallenbagel/jellyseerr:2.5.2
+    image: fallenbagel/jellyseerr:2.7.2
     container_name: jellyseerr
     networks:
       - mynetwork
