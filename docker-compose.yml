@@ -93,7 +93,7 @@ services:
   radarr:
     profiles: ["vpn", "no-vpn"]
     container_name: radarr
-    image: lscr.io/linuxserver/radarr:5.27.5
+    image: lscr.io/linuxserver/radarr:5.28.0
     networks:
       - mynetwork   # Comment this line if VPN is enabled
     ## Uncomment below lines if VPN is enabled
@@ -112,7 +112,7 @@ services:
 
   sonarr:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/sonarr:4.0.15
+    image: linuxserver/sonarr:4.0.16
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
@@ -133,7 +133,7 @@ services:
   prowlarr:
     profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
-    image: linuxserver/prowlarr:2.0.5
+    image: linuxserver/prowlarr:2.1.5
 
     # Uncomment below if vpn is enabled
     # depends_on:               # Uncomment this line if vpn is enabled
@@ -190,7 +190,7 @@ services:
 
   jellyfin:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/jellyfin:10.10.7
+    image: linuxserver/jellyfin:10.11.2
     container_name: jellyfin
     networks:
       - mynetwork
