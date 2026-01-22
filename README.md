@@ -9,6 +9,7 @@ This stack includes:
 - **VPN:** For secure and private media downloading
 - **Radarr:** For movie management
 - **Sonarr:** For TV show management
+- **Bazarr:** For automatic subtitle management
 - **Prowlarr:** A torrent indexer manager for Radarr/Sonarr
 - **qBittorrent:** Torrent client for downloading media
 - **Jellyseerr:** To manage media requests
@@ -77,7 +78,7 @@ Once updated, follow the steps below to deploy the stack with VPN.
 ### Deploying the Stack with VPN (NordVPN Example)  
 
 ```bash
-VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland RADARR_STATIC_CONTAINER_IP=radarr-container-static-ip SONARR_STATIC_CONTAINER_IP=sonarr-container-static-ip docker compose --profile vpn up -d
+VPN_SERVICE_PROVIDER=nordvpn OPENVPN_USER=openvpn-username OPENVPN_PASSWORD=openvpn-password SERVER_COUNTRIES=Switzerland RADARR_STATIC_CONTAINER_IP=radarr-container-static-ip SONARR_STATIC_CONTAINER_IP=sonarr-container-static-ip BAZARR_STATIC_CONTAINER_IP=bazarr-container-static-ip docker compose --profile vpn up -d
 
 # OPTIONAL: Use Nginx as a reverse proxy
 # docker compose -f docker-compose-nginx.yml up -d
@@ -89,10 +90,11 @@ A **static container IP address** is needed when **Prowlarr** is behind a VPN.
 Since Prowlarr can only communicate with **Radarr** and **Sonarr** using their **container IP addresses**,  
 these must be **manually assigned** to avoid connection issues when containers restart.  
 
-Use the following environment variables to set static IPs:  
+Use the following environment variables to set static IPs:
 
-- `RADARR_STATIC_CONTAINER_IP`  
-- `SONARR_STATIC_CONTAINER_IP`  
+- `RADARR_STATIC_CONTAINER_IP`
+- `SONARR_STATIC_CONTAINER_IP`
+- `BAZARR_STATIC_CONTAINER_IP`  
 
 ## Deploy the Stack Without VPN  
 
@@ -167,7 +169,20 @@ Sonarr can also be configured in similar way.
 
 - Open Jellyfin at http://localhost:5055
 - When you access the jellyseerr for first time using browser, A guided configuration will guide you to configure jellyseerr. Just follow the guide and provide the required details about sonarr and Radarr.
-- Follow the Overseerr document (Jellyseerr is fork of overseerr) for detailed setup - https://docs.overseerr.dev/ 
+- Follow the Overseerr document (Jellyseerr is fork of overseerr) for detailed setup - https://docs.overseerr.dev/
+
+## Configure Bazarr
+
+- Open Bazarr at http://localhost:6767
+- Settings --> General --> URL Base --> Add base (/bazarr) if using reverse proxy
+- Settings --> Sonarr --> Enable Sonarr --> Address (sonarr) --> Port (8989) --> API Key (from Sonarr Settings --> General --> API Key) --> Test --> Save
+- Settings --> Radarr --> Enable Radarr --> Address (radarr) --> Port (7878) --> API Key (from Radarr Settings --> General --> API Key) --> Test --> Save
+- Settings --> Languages --> Add your preferred subtitle languages --> Set as default for Series and Movies
+- Settings --> Providers --> Add subtitle providers (e.g., OpenSubtitles.com, Subscene, etc.) --> Configure credentials if required --> Test and Save
+- Bazarr will automatically search and download subtitles for all movies and TV shows indexed in Radarr and Sonarr.
+- You can manually search for subtitles: Movies/Series --> Select item --> Search for subtitles
+
+**Note: If VPN is enabled, then Bazarr will not be able to reach Radarr and Sonarr with container service name. In that case use static IP for Sonarr and Radarr in server fields (e.g. http://172.20.0.2:7878 for Radarr, http://172.20.0.3:8989 for Sonarr).**
 
 ## Configure Prowlarr
 
@@ -246,6 +261,25 @@ location /sonarr {
     proxy_set_header Connection $http_connection;
   }
 ```
+
+## Bazarr Nginx reverse proxy
+
+- Settings --> General --> URL Base --> Add base (/bazarr)
+- Add below proxy in nginx configuration
+
+```
+location /bazarr {
+    proxy_pass http://bazarr:6767;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $http_connection;
+  }
+```
+
+- Restart containers.
 
 ## Prowlarr Nginx reverse proxy
 
