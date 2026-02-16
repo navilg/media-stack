@@ -174,7 +174,7 @@ services:
 
   jellyseerr:
     profiles: ["vpn", "no-vpn"]
-    image: fallenbagel/jellyseerr:2.7.3
+    image: ghcr.io/seerr-team/seerr:3.0.1
     container_name: jellyseerr
     networks:
       - mynetwork
