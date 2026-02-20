@@ -172,18 +172,19 @@ services:
       - 3000:3000
     restart: unless-stopped
 
-  jellyseerr:
+  seerr:
     profiles: ["vpn", "no-vpn"]
-    image: ghcr.io/seerr-team/seerr:3.0.1
-    container_name: jellyseerr
+    image: ghcr.io/seerr-team/seerr:v3.0.1
+    container_name: seerr
     networks:
       - mynetwork
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
+      - PORT=5055
     volumes:
-      - jellyseerr-config:/app/config
+      - seerr-config:/app/config
     ports:
       - 5055:5055
     restart: unless-stopped
@@ -248,7 +249,7 @@ volumes:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
-  jellyseerr-config:
+  seerr-config:
   recommendarr-data:
   # cleanmyarr-config:
 
