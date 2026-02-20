@@ -7,7 +7,7 @@ services:
     ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.40.3
+    image: qmcgaw/gluetun:v3.41.1
     cap_add:
       - NET_ADMIN
     environment:
@@ -53,6 +53,8 @@ services:
     #   - 6881:6881/udp
     #   # prowlarr ports
     #   - 9696:9696
+    volumes:
+      - gluetun-data:/gluetun
     restart: "unless-stopped"
 
   ## Default credentials of qBittorrent - Username: admin password: adminadmin ##
@@ -243,6 +245,7 @@ services:
     # - CMA_RADARR_ENABLE_NOTIFICATION=${CMA_RADARR_ENABLE_NOTIFICATION:-""}
 
 volumes:
+  gluetun-data:
   torrent-downloads:
   radarr-config:
   sonarr-config:
