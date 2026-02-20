@@ -11,7 +11,7 @@ This stack includes:
 - **Sonarr:** For TV show management
 - **Prowlarr:** A torrent indexer manager for Radarr/Sonarr
 - **qBittorrent:** Torrent client for downloading media
-- **Jellyseerr:** To manage media requests
+- **Seerr:** To manage media requests
 - **Jellyfin:** Open-source media streamer
 - **Recommendarr:** For AI-powered movie and show recommendations
 
@@ -23,8 +23,14 @@ This stack includes:
 
 ## Install media stack
 
-> **⚠️ Warning for ARMv7 Users:**  
-> Jellyseerr **v2.0.x** introduces breaking changes, dropping support for the **ARMv7** container image. However, **ARM64** support remains available. You will not be able to run Jellyseerr in ARMv7 CPU.
+> **⚠️ Important Notice for Jellyseerr/Seerr Users:**
+> As of version 3, Jellyseerr and Overseerr have been unified into a single project called **Seerr**.
+>
+> If you're migrating from Jellyseerr to Seerr:
+> - Use the same volume name (`jellyseerr-config`) to preserve your existing configuration and avoid data loss.
+> - Before starting the Seerr container, change ownership of the config volume to UID 1000 (Seerr's non-root user), as Jellyseerr previously ran as `root`. Run the following command:
+>
+> `docker run --rm -v media-stack_jellyseerr-config:/data alpine chown -R 1000:1000 /data`
 
 There are three ways to deploy this stack:
 
@@ -163,11 +169,11 @@ Sonarr can also be configured in similar way.
 - When you access the jellyfin for first time using browser, A guided configuration will guide you to configure jellyfin. Just follow the guide.
 - Add media library folder and choose /data/movies/
 
-## Configure Jellyseerr
+## Configure Seerr
 
 - Open Jellyfin at http://localhost:5055
-- When you access the jellyseerr for first time using browser, A guided configuration will guide you to configure jellyseerr. Just follow the guide and provide the required details about sonarr and Radarr.
-- Follow the Overseerr document (Jellyseerr is fork of overseerr) for detailed setup - https://docs.overseerr.dev/ 
+- When you access the seerr for first time using browser, A guided configuration will guide you to configure seerr. Just follow the guide and provide the required details about sonarr and Radarr.
+- Follow the Seerr document for detailed setup - https://docs.seerr.dev/
 
 ## Configure Prowlarr
 
@@ -320,9 +326,9 @@ location /qbt/ {
     }
 ```
 
-## Jellyseerr Nginx proxy
+## Seerr Nginx proxy
 
-**Currently Jellyseerr/Overseerr doesnot officially support the subfolder/path reverse proxy. They have a workaround documented here without an official support. Find it [here](https://docs.overseerr.dev/extending-overseerr/reverse-proxy)**
+**Currently Seerr doesnot officially support the subfolder/path reverse proxy. They have a workaround documented here without an official support. Find it [here](https://docs.seerr.dev/extending-seerr/reverse-proxy)**
 
 ```
 location / {
