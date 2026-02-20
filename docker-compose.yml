@@ -193,7 +193,7 @@ services:
 
   jellyfin:
     profiles: ["vpn", "no-vpn"]
-    image: linuxserver/jellyfin:10.11.4
+    image: linuxserver/jellyfin:10.11.6
     container_name: jellyfin
     networks:
       - mynetwork
