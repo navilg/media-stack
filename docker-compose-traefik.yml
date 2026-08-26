@@ -6,7 +6,6 @@ services:
     command:
       # - --log.level=DEBUG
       - --api.dashboard=true
-      - --all.dashboard=true
       - --providers.docker=true
       - --providers.docker.network=mynetwork
       - --accesslog=true
