@@ -1,11 +1,12 @@
 version: "3.3"
 services:
   traefik:
-    image: traefik:v3.6.13
+    image: traefik:v3.7.11
     container_name: traefik
     command:
       # - --log.level=DEBUG
       - --api.dashboard=true
+      - --all.dashboard=true
       - --providers.docker=true
       - --providers.docker.network=mynetwork
       - --accesslog=true
@@ -42,7 +43,6 @@ services:
       - traefik-le:/letsencrypt
     networks:
       - mynetwork
-
 
 volumes:
   traefik-le:

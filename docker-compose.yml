@@ -7,7 +7,7 @@ services:
     ## Read https://github.com/qdm12/gluetun-wiki/tree/main/setup/providers for details on configuring VPN for your service provider.
     profiles: ["vpn"]
     container_name: vpn
-    image: qmcgaw/gluetun:v3.41.1
+    image: qmcgaw/gluetun:v3.41.3
     cap_add:
       - NET_ADMIN
     environment:
@@ -118,7 +118,7 @@ services:
     container_name: sonarr
     networks:
       - mynetwork   # Comment this line if VPN is enabled
-    ## Uncomment below lines if VPN is enabled
+    ## If this line if VPN is enabled
     #   mynetwork:
     #     ipv4_address: ${SONARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.2
     environment:
