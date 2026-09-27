@@ -176,7 +176,7 @@ services:
 
   seerr:
     profiles: ["vpn", "no-vpn"]
-    image: ghcr.io/seerr-team/seerr:v3.4.0
+    image: ghcr.io/seerr-team/seerr:v3.4.1
     container_name: seerr
     networks:
       - mynetwork
