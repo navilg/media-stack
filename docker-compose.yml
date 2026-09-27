@@ -132,6 +132,26 @@ services:
       - 8989:8989
     restart: unless-stopped
 
+  bazarr:
+    profiles: ["vpn", "no-vpn"]
+    image: lscr.io/linuxserver/bazarr:1.5.1
+    container_name: bazarr
+    networks:
+      - mynetwork   # Comment this line if VPN is enabled
+    ## Uncomment below lines if VPN is enabled
+    #   mynetwork:
+    #     ipv4_address: ${BAZARR_STATIC_CONTAINER_IP} # It should be available IPv4 address in range of docker network `mynetwork` e.g. 172.20.0.4
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+    volumes:
+      - bazarr-config:/config
+      - torrent-downloads:/downloads
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+
   prowlarr:
     profiles: ["vpn", "no-vpn"]
     container_name: prowlarr
@@ -249,6 +269,7 @@ volumes:
   torrent-downloads:
   radarr-config:
   sonarr-config:
+  bazarr-config:
   prowlarr-config:
   jellyfin-config:
   qbittorrent-config:
