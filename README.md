@@ -23,14 +23,20 @@ This stack includes:
 
 ## Install media stack
 
-> **⚠️ Important Notice for Jellyseerr/Seerr Users:**
-> As of version 3, Jellyseerr and Overseerr have been unified into a single project called **Seerr**.
+> **⚠️ Jellyfin v12 Upgrade Notice:**
+> This stack now ships **Jellyfin 12.1** (the leading `10.` was dropped from Jellyfin's versioning — what would have been `10.12.x` is now `12.x`). Upgrading from `10.11.x` is a **major upgrade** that **cannot be rolled back** without a full restore.
 >
-> If you're migrating from Jellyseerr to Seerr:
-> - Use the same volume name (`jellyseerr-config`) to preserve your existing configuration and avoid data loss.
-> - Before starting the Seerr container, change ownership of the config volume to UID 1000 (Seerr's non-root user), as Jellyseerr previously ran as `root`. Run the following command:
+> **Before upgrading:**
+> - **Take a full backup** of your Jellyfin data and config directories. The release includes database changes that prevent rolling back without a full restore.
+> - **Remove third-party plugins first.** Plugins built for 10.11 will not load on 12.x and must be updated by their authors before being re-added.
 >
-> `docker run --rm -v media-stack_jellyseerr-config:/data alpine chown -R 1000:1000 /data`
+> **After upgrading:**
+> - **A full library scan is required.** The first scan will take significantly longer than normal and some items may briefly appear as newly added.
+> - The **Modern web layout is now the default** (the previous layout is available as "Legacy").
+> - Very old third-party clients relying on legacy `/emby/` and `/mediabrowser/` addresses or the deprecated sign-in method will stop working.
+> - If you notice UI anomalies, **hard-refresh** (Ctrl+Shift+R) or clear your browser cache.
+>
+> Jellyfin **12.1** is a minor release on top of 12.0 focused on bug fixes and reliability improvements. See the [Jellyfin 12.0 release notes](https://jellyfin.org/posts/jellyfin-release-12.0/) for full details.
 
 There are three ways to deploy this stack:
 
