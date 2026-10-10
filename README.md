@@ -24,19 +24,16 @@ This stack includes:
 ## Install media stack
 
 > **⚠️ Jellyfin v12 Upgrade Notice:**
-> This stack now ships **Jellyfin 12.1** (the leading `10.` was dropped from Jellyfin's versioning — what would have been `10.12.x` is now `12.x`). Upgrading from `10.11.x` is a **major upgrade** that **cannot be rolled back** without a full restore.
+> This stack now ships **Jellyfin 12.1**. Upgrading from `10.11.x` is a **major upgrade** that **cannot be rolled back** without a full restore.
 >
 > **Before upgrading:**
 > - **Take a full backup** of your Jellyfin data and config directories. The release includes database changes that prevent rolling back without a full restore.
 > - **Remove third-party plugins first.** Plugins built for 10.11 will not load on 12.x and must be updated by their authors before being re-added.
 >
 > **After upgrading:**
-> - **A full library scan is required.** The first scan will take significantly longer than normal and some items may briefly appear as newly added.
-> - The **Modern web layout is now the default** (the previous layout is available as "Legacy").
-> - Very old third-party clients relying on legacy `/emby/` and `/mediabrowser/` addresses or the deprecated sign-in method will stop working.
-> - If you notice UI anomalies, **hard-refresh** (Ctrl+Shift+R) or clear your browser cache.
+> - **A full library scan is required.**
 >
-> Jellyfin **12.1** is a minor release on top of 12.0 focused on bug fixes and reliability improvements. See the [Jellyfin 12.0 release notes](https://jellyfin.org/posts/jellyfin-release-12.0/) for full details.
+> See the [Jellyfin 12.0 release notes](https://jellyfin.org/posts/jellyfin-release-12.0/) for full details.
 
 There are three ways to deploy this stack:
 
