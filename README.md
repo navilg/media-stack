@@ -23,14 +23,17 @@ This stack includes:
 
 ## Install media stack
 
-> **⚠️ Important Notice for Jellyseerr/Seerr Users:**
-> As of version 3, Jellyseerr and Overseerr have been unified into a single project called **Seerr**.
+> **⚠️ Jellyfin v12 Upgrade Notice:**
+> This stack now ships **Jellyfin 12.1**. Upgrading from `10.11.x` is a **major upgrade** that **cannot be rolled back** without a full restore.
 >
-> If you're migrating from Jellyseerr to Seerr:
-> - Use the same volume name (`jellyseerr-config`) to preserve your existing configuration and avoid data loss.
-> - Before starting the Seerr container, change ownership of the config volume to UID 1000 (Seerr's non-root user), as Jellyseerr previously ran as `root`. Run the following command:
+> **Before upgrading:**
+> - **Take a full backup** of your Jellyfin data and config directories. The release includes database changes that prevent rolling back without a full restore.
+> - **Remove third-party plugins first.** Plugins built for 10.11 will not load on 12.x and must be updated by their authors before being re-added.
 >
-> `docker run --rm -v media-stack_jellyseerr-config:/data alpine chown -R 1000:1000 /data`
+> **After upgrading:**
+> - **A full library scan is required.**
+>
+> See the [Jellyfin 12.0 release notes](https://jellyfin.org/posts/jellyfin-release-12.0/) for full details.
 
 There are three ways to deploy this stack:
 
